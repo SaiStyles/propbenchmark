@@ -250,6 +250,7 @@ type Props = { slug: string; dbFirm?: FirmDetailData | null }
 
 export default function FirmDetail({ slug, dbFirm }: Props) {
   const [activeTab, setActiveTab] = useState('Overview')
+  const [selectedProgram, setSelectedProgram] = useState('')
   const [selectedAccount, setSelectedAccount] = useState(0)
 
   // Use DB data when available, fall back to hardcoded mock
@@ -265,7 +266,11 @@ export default function FirmDetail({ slug, dbFirm }: Props) {
     )
   }
 
-  const account = firm.accounts[selectedAccount]
+  const programs = [...new Set(firm.accounts.map(a => a.programName).filter((p): p is string => !!p))]
+  const hasPrograms = programs.length > 1
+  const activeProgram = selectedProgram || programs[0] || ''
+  const programAccounts = hasPrograms ? firm.accounts.filter(a => a.programName === activeProgram) : firm.accounts
+  const account = programAccounts[selectedAccount] ?? programAccounts[0]
   const isEditorial = EDITORIAL_TAGS.has(firm.tag)
 
   return (
@@ -367,6 +372,30 @@ export default function FirmDetail({ slug, dbFirm }: Props) {
       {/* Overview Tab */}
       {activeTab === 'Overview' && (
         <div>
+          {/* Program Selector */}
+          {hasPrograms && (
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{
+                fontSize: '11px', color: '#475569',
+                marginBottom: '12px', fontWeight: 600,
+                textTransform: 'uppercase', letterSpacing: '1px',
+              }}>Program</div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {programs.map(prog => (
+                  <button key={prog} onClick={() => { setSelectedProgram(prog); setSelectedAccount(0) }} style={{
+                    padding: '8px 16px', borderRadius: '8px', cursor: 'pointer',
+                    fontSize: '14px', fontWeight: 600, transition: 'all 0.15s',
+                    border: activeProgram === prog ? '1px solid rgba(0,255,136,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                    background: activeProgram === prog ? 'rgba(0,255,136,0.08)' : 'transparent',
+                    color: activeProgram === prog ? '#00ff88' : '#475569',
+                  }}>
+                    {prog}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Account Size Selector */}
           <div style={{ marginBottom: '28px' }}>
             <div style={{
@@ -375,8 +404,8 @@ export default function FirmDetail({ slug, dbFirm }: Props) {
               textTransform: 'uppercase', letterSpacing: '1px',
             }}>Account Size</div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {firm.accounts.map((acc, i) => (
-                <button key={acc.size} onClick={() => setSelectedAccount(i)} style={{
+              {programAccounts.map((acc, i) => (
+                <button key={`${i}-${acc.size}`} onClick={() => setSelectedAccount(i)} style={{
                   padding: '8px 16px', borderRadius: '8px', cursor: 'pointer',
                   fontSize: '14px', fontWeight: 600, transition: 'all 0.15s',
                   border: selectedAccount === i ? '1px solid rgba(0,255,136,0.4)' : '1px solid rgba(255,255,255,0.08)',
@@ -417,11 +446,11 @@ export default function FirmDetail({ slug, dbFirm }: Props) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <div style={{
                     fontSize: '20px', fontWeight: 700,
-                    color: highlight ? '#00ff88' : isDrawdown && value !== 'N/A' ? '#f59e0b' : '#f1f5f9',
+                    color: highlight ? '#00ff88' : isDrawdown && value !== 'None' ? '#f59e0b' : '#f1f5f9',
                   }}>{value}</div>
                   {isSplit && <ProfitSplitArc percent={firm.profitSplit} size={28} />}
                 </div>
-                {isDrawdown && value !== 'N/A' && (
+                {isDrawdown && value.endsWith('%') && (
                   <DrawdownBar percent={parsePercent(value)} />
                 )}
               </div>

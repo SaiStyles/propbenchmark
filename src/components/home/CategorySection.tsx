@@ -5,7 +5,7 @@ import Link from 'next/link'
 const categories = [
   {
     emoji: '🌍',
-    title: 'Forex Firms',
+    title: 'CFD Firms',
     description: 'Best for forex & CFD traders',
     href: '/firms?category=forex',
   },

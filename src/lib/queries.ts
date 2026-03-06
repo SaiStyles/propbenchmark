@@ -29,7 +29,9 @@ function mapAccounts(models: DbAccountModel[]): AccountModel[] {
       fee: m.challenge_fee != null ? fmtFee(m.challenge_fee) : '—',
       profitTarget: fmtPercent(m.profit_target),
       maxDrawdown: fmtPercent(m.max_drawdown),
-      dailyDrawdown: m.daily_drawdown != null ? fmtPercent(m.daily_drawdown) : 'N/A',
+      dailyDrawdown: m.daily_drawdown != null
+        ? `${fmtFee(m.daily_drawdown)} (${((m.daily_drawdown / m.account_size) * 100).toFixed(1)}%)`
+        : 'None',
       programName: m.program_name,
     }))
 }

@@ -3,24 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
+import type { OfferData } from '@/lib/types'
 
-export type Offer = {
-  id: number
-  firmName: string
-  firmLogo: string
-  firmSlug: string
-  firmRating: number
-  firmReviews: number
-  category: 'forex' | 'futures' | 'instant'
-  discount: number
-  code: string
-  description: string
-  tag: string
-  featured: boolean
-  affiliateUrl: string
-  savings: string
-  expires: string | null
-}
+// Backward-compat alias used by OffersPage
+export type Offer = OfferData
 
 const FEATURED_OFFER_TAGS = new Set(['EXCLUSIVE', 'BEST DEAL'])
 

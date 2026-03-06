@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import FirmCard, { Firm } from './FirmCard'
+import type { Firm } from '@/lib/types'
+import FirmCard from './FirmCard'
 import FirmsFilter from './FirmsFilter'
 
-const ALL_FIRMS: Firm[] = [
+const MOCK_FIRMS: Firm[] = [
   {
     id: 1, name: 'FTMO', logo: 'F', rating: 4.9, reviews: 2847, discount: 10,
     tag: "EDITOR'S CHOICE", profitSplit: '90%', maxDrawdown: '10%',
@@ -60,7 +61,11 @@ const ALL_FIRMS: Firm[] = [
   },
 ]
 
-export default function FirmsDirectory() {
+type Props = { initialFirms?: Firm[] }
+
+export default function FirmsDirectory({ initialFirms }: Props) {
+  const ALL_FIRMS = initialFirms && initialFirms.length > 0 ? initialFirms : MOCK_FIRMS
+
   const [filters, setFilters] = useState({
     search: '',
     category: 'all',

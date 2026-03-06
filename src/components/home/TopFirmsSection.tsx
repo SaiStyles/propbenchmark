@@ -2,49 +2,54 @@
 
 import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
+import type { Firm } from '@/lib/types'
 
 const EDITORIAL_TAGS = new Set(["EDITOR'S CHOICE", 'TOP RATED', 'FUTURES #1', 'BEST VALUE'])
 
-const firms = [
+const MOCK_FIRMS: Firm[] = [
   {
     id: 1, name: 'FTMO', logo: 'F', rating: 4.9, reviews: 2847, discount: 10,
-    tag: "EDITOR'S CHOICE",
-    profitSplit: '90%', maxDrawdown: '10%', challengeFee: '$155', steps: 2,
+    tag: "EDITOR'S CHOICE", profitSplit: '90%', maxDrawdown: '10%', challengeFee: '$155',
+    steps: 2, instantFunding: false, weekendHolding: true, category: 'forex',
     slug: 'ftmo', featured: true, verified: true,
   },
   {
     id: 2, name: 'Funding Pips', logo: 'FP', rating: 4.8, reviews: 1923, discount: 15,
-    tag: 'TOP RATED',
-    profitSplit: '85%', maxDrawdown: '8%', challengeFee: '$99', steps: 1,
+    tag: 'TOP RATED', profitSplit: '85%', maxDrawdown: '8%', challengeFee: '$99',
+    steps: 1, instantFunding: false, weekendHolding: true, category: 'forex',
     slug: 'funding-pips', featured: true, verified: true,
   },
   {
     id: 3, name: 'Topstep', logo: 'TS', rating: 4.7, reviews: 3102, discount: 20,
-    tag: 'FUTURES #1',
-    profitSplit: '90%', maxDrawdown: '6%', challengeFee: '$165', steps: 1,
+    tag: 'FUTURES #1', profitSplit: '90%', maxDrawdown: '6%', challengeFee: '$165',
+    steps: 1, instantFunding: false, weekendHolding: false, category: 'futures',
     slug: 'topstep', verified: true,
   },
   {
     id: 4, name: 'The5ers', logo: '5', rating: 4.8, reviews: 1456, discount: 5,
-    tag: 'LOW COST',
-    profitSplit: '100%', maxDrawdown: '5%', challengeFee: '$39', steps: 2,
+    tag: 'LOW COST', profitSplit: '100%', maxDrawdown: '5%', challengeFee: '$39',
+    steps: 2, instantFunding: false, weekendHolding: true, category: 'forex',
     slug: 'the5ers', verified: true,
   },
   {
     id: 5, name: 'Apex Trader', logo: 'AT', rating: 4.6, reviews: 2231, discount: 25,
-    tag: 'BEST VALUE',
-    profitSplit: '90%', maxDrawdown: '6%', challengeFee: '$137', steps: 1,
+    tag: 'BEST VALUE', profitSplit: '90%', maxDrawdown: '6%', challengeFee: '$137',
+    steps: 1, instantFunding: false, weekendHolding: false, category: 'futures',
     slug: 'apex-trader', verified: true,
   },
   {
     id: 6, name: 'Alpha Capital', logo: 'AC', rating: 4.4, reviews: 867, discount: 15,
-    tag: 'INSTANT FUND',
-    profitSplit: '80%', maxDrawdown: '10%', challengeFee: '$299', steps: 0,
+    tag: 'INSTANT FUND', profitSplit: '80%', maxDrawdown: '10%', challengeFee: '$299',
+    steps: 0, instantFunding: true, weekendHolding: true, category: 'instant',
     slug: 'alpha-capital',
   },
 ]
 
-export default function TopFirmsSection() {
+type Props = { firms?: Firm[] }
+
+export default function TopFirmsSection({ firms: propFirms }: Props) {
+  const firms = propFirms && propFirms.length > 0 ? propFirms : MOCK_FIRMS
+
   return (
     <section style={{ padding: '80px 24px 72px', maxWidth: '1200px', margin: '0 auto' }}>
       {/* Header */}

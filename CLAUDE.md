@@ -38,22 +38,26 @@ Retail traders looking to get funded — they need trust, clarity, and real comp
 
 **Non-negotiable. Never deviate from this.**
 
-| Token | Value |
-|---|---|
-| Background | `#060b14` |
-| Card background | `#0a1628` or `white/[0.03]` |
-| Accent green | `#00ff88` |
-| Border | `white/[0.08]` or `white/[0.10]` |
-| Primary text | `white` |
-| Secondary text | `white/60` or `white/40` |
-| Font | Inter (loaded via next/font) |
+| Role | Color | Used for |
+|---|---|---|
+| LIME | `#00ff88` | CTA buttons, editorial tag badges, active nav, pulse dot, profit split % value |
+| WARM WHITE | `#f1f5f9` | Headings, firm names, key numbers, prices |
+| MID GREY | `#94a3b8` | Body text, descriptions, card subtitles |
+| DIM GREY | `#475569` | Meta info, labels, dates, stat labels, inactive nav links |
+| CYAN | `#22d3ee` | Platform chips (bg `#0e2030`, border `rgba(34,211,238,0.2)`), ranking highlights |
+| AMBER | `#f59e0b` | Drawdown values, savings amounts, expiry warnings, offer tags |
+| CARD BG | `#0d1117` | All cards |
+| HOVER BG | `#111827` | Card hover state |
+| PAGE BG | `#060b14` | Page background |
 
-- **Style:** Dark, premium, confident — inspired by Lucid Trading. Clean and data-dense.
-- **Accents:** Lime green `#00ff88` for highlights, CTAs, badges, best-value indicators
-- **Borders:** Subtle `border-white/8` or `border-white/10` — never harsh
-- **Buttons:** Primary = `bg-[#00ff88] text-[#060b14] font-bold`. Secondary = outlined with white/10 border
-- **Cards:** `rounded-2xl border border-white/8 bg-white/[0.03]`
-- **Badges:** `rounded-full bg-[#00ff88]/10 border border-[#00ff88]/20 text-[#00ff88] text-xs`
+- **Style:** Dark, premium, confident. Clean and data-dense.
+- **Styling approach:** Inline `style` objects — not Tailwind utility classes (except `anim-fade-up`, `featured-card-border`, `pulse-dot`)
+- **Card borders:** `1px solid rgba(255,255,255,0.07)` default, `rgba(255,255,255,0.12)` hover
+- **Non-editorial tags** (LOW COST, RISING STAR, etc.): `color: #94a3b8`, `bg: rgba(255,255,255,0.04)`, `border: rgba(255,255,255,0.08)`
+- **Offer tags** (EXCLUSIVE, BEST DEAL): amber `#f59e0b`, bg `rgba(245,158,11,0.08)`, border `rgba(245,158,11,0.25)`
+- **Discount code pill:** bg `#1a2a1a`, border `rgba(0,255,136,0.3)`, text `#00ff88`
+- **Featured cards:** use `.featured-card-border` CSS class (shimmer animation)
+- **Background depth** (globals.css): dot grid + lime glow top-right (`body::before`) + cyan glow bottom-left (`body::after`)
 - **No purple gradients, no white backgrounds, no generic AI aesthetics**
 
 ---
@@ -78,7 +82,7 @@ Built with Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, and Supa
 src/app/
   layout.tsx              # Root layout: Navbar + Footer
   page.tsx                # Home page
-  globals.css             # Global styles, CSS variables
+  globals.css             # Global styles, CSS vars, bg depth, animations
   firms/
     page.tsx              # /firms listing
     [slug]/page.tsx       # /firms/[slug] detail page
@@ -88,18 +92,17 @@ src/app/
     page.tsx              # /offers page
   rankings/
     page.tsx              # /rankings page
-  blog/
-    page.tsx              # /blog listing
-    [slug]/page.tsx       # /blog/[slug] post
+  blog/                   # (to build)
 
 src/components/
   Navbar.tsx
   Footer.tsx
   home/                   # HeroSection, StatsSection, TopFirmsSection, CategorySection
   firms/                  # FirmsDirectory, FirmCard, FirmDetail, FirmsFilter
-  compare/                # CompareClient, CompareTable, FirmSelector
-  offers/                 # (to build)
-  rankings/               # (to build)
+  compare/                # CompareView, CompareTable, CompareSelector
+  offers/                 # OfferCard, OffersPage
+  rankings/               # RankingsPage, RankingList
+  ui/                     # CountUp, DrawdownBar, ProfitSplitArc, StarRating
   blog/                   # (to build)
 
 src/lib/
@@ -118,21 +121,21 @@ Supabase is configured via `.env.local`:
 **Current state:** All firm data is hardcoded as mock data inside components. Supabase is set up but not yet wired. When integrating real data, use server client in Server Components and browser client for client-side queries.
 
 ### Supabase tables
-`profiles`, `firms`, `reviews`, `offers`, `blog_posts`, `featured_slots` — all with RLS policies set.
+`profiles`, `firms`, `reviews`, `offers`, `blog_posts`, `featured_slots`, `account_models`, `pros_cons` — all with RLS policies set.
 
-### Firm data shape
+### DB schema (firms → account_models, pros_cons)
 
-```typescript
-{
-  id, name, logo, rating, reviews, discount, tag,
-  profitSplit, maxDrawdown, challengeFee,
-  steps: number,          // 0 = instant funding, 1–3 = challenge steps
-  instantFunding: boolean,
-  weekendHolding: boolean,
-  category: "forex" | "futures" | "instant",
-  slug: string,
-  // FirmDetail adds: platforms, instruments, description, pros, cons, accounts, traderReviews
-}
+```
+firms: id, name, slug, logo_url, website, category, platforms[], instruments[],
+       editor_rating, status, affiliate_link, discount_code, discount_percent, description
+
+account_models: id, firm_id, program_name, account_size, challenge_fee, activation_fee,
+                profit_target, max_drawdown, daily_drawdown, profit_split, evaluation_steps,
+                minimum_trading_days, consistency_rule, weekend_holding, news_trading,
+                max_contracts, first_payout_days, payout_frequency, minimum_payout, scaling_available
+                UNIQUE (firm_id, program_name, account_size)
+
+pros_cons: id, firm_id, type (pro|con), text
 ```
 
 ---
@@ -143,17 +146,19 @@ Supabase is configured via `.env.local`:
 - `app/page.tsx` — Home page
 - `components/home/` — HeroSection, StatsSection, TopFirmsSection, CategorySection
 - `app/firms/page.tsx` — Firm directory
-- `components/firms/` — FirmsDirectory, FirmCard, FirmDetail (with account size selector + tabs), FirmsFilter
+- `components/firms/` — FirmsDirectory, FirmCard, FirmDetail (account size selector + tabs), FirmsFilter
 - `app/firms/[slug]/page.tsx` — Individual firm page
-- `app/compare/` — Compare tool (CompareClient, CompareTable, FirmSelector)
+- `app/compare/` — Compare tool (CompareView, CompareTable, CompareSelector)
+- `app/offers/` — Offers page (OfferCard, OffersPage)
+- `app/rankings/` — Rankings page (RankingsPage, RankingList)
+- `components/ui/` — CountUp, DrawdownBar, ProfitSplitArc, StarRating
+- Supabase schema — firms, account_models, pros_cons tables with RLS + indexes
 
 ## Still To Build 🔨
 
-- `/offers` — Exclusive discount codes and affiliate offers per firm
-- `/rankings` — Ranked lists (best for beginners, best payout, best for futures, etc.)
 - `/blog` + `/blog/[slug]` — Blog/editorial content
+- Supabase integration — replace all hardcoded mock data with DB queries
 - OAuth (Google + X) — account must be 1yr+ to leave reviews
-- Supabase integration — replace all hardcoded mock data
 - Admin panel — add/edit firms, manage featured slots
 - Review submission flow
 - Newsletter signup
@@ -161,7 +166,7 @@ Supabase is configured via `.env.local`:
 
 ## Known Things To Revisit
 
-- Challenge types within account sizes (Core, Rapid, etc.) — data structure ready, UI to be added when Supabase connected
+- Challenge types within account sizes (Core, Rapid, etc.) — DB schema ready, UI to be added when Supabase connected
 - Featured firm placement logic
 
 ---
@@ -170,9 +175,11 @@ Supabase is configured via `.env.local`:
 
 When building new pages/components always:
 1. Read existing components first for consistency (especially FirmCard, FirmDetail, Navbar)
-2. Match the card style: `rounded-2xl border border-white/8 bg-white/[0.03]`
-3. Use the sticky header pattern from compare page for sub-navigation
-4. Use `#00ff88` only for: best value indicators, CTAs, active states, badges
-5. Keep pages within `max-w-[1400px] mx-auto px-4 sm:px-6`
-6. All new pages need a `metadata` export for SEO
-7. Every affiliate link: `target="_blank" rel="noopener noreferrer"`
+2. Use inline `style` objects — not Tailwind utility classes
+3. Card bg `#0d1117`, border `1px solid rgba(255,255,255,0.07)`, hover border `rgba(255,255,255,0.12)`
+4. Use the sticky header pattern from compare page for sub-navigation
+5. Use `#00ff88` only for: best value indicators, CTAs, active states, profit split values
+6. Keep pages within `max-w-[1400px] mx-auto` with `px: 24px` inline
+7. All new pages need a `metadata` export for SEO
+8. Every affiliate link: `target="_blank" rel="noopener noreferrer"`
+9. Use `<DrawdownBar>` for drawdown values, `<ProfitSplitArc>` for profit split, `<CountUp>` for animated numbers

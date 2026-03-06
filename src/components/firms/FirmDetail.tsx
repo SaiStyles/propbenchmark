@@ -5,6 +5,7 @@ import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
 import ProfitSplitArc from '@/components/ui/ProfitSplitArc'
 import DrawdownBar from '@/components/ui/DrawdownBar'
+import type { FirmDetailData } from '@/lib/types'
 
 type Account = {
   size: string
@@ -233,10 +234,26 @@ function parsePercent(s: string): number {
   return parseFloat(s.replace('%', '')) || 0
 }
 
-export default function FirmDetail({ slug }: { slug: string }) {
+function fromDbFirm(d: FirmDetailData): FirmData {
+  return {
+    name: d.name, logo: d.logo, rating: d.rating, reviews: d.reviews,
+    discount: d.discount, tag: d.tag, discountCode: d.discountCode,
+    profitSplit: d.profitSplit, steps: d.steps, payoutFreq: d.payoutFreq,
+    minPayout: d.minPayout, countries: d.countries, instantFunding: d.instantFunding,
+    weekendHolding: d.weekendHolding, platforms: d.platforms, instruments: d.instruments,
+    description: d.description, pros: d.pros, cons: d.cons,
+    accounts: d.accounts, traderReviews: [],
+  }
+}
+
+type Props = { slug: string; dbFirm?: FirmDetailData | null }
+
+export default function FirmDetail({ slug, dbFirm }: Props) {
   const [activeTab, setActiveTab] = useState('Overview')
   const [selectedAccount, setSelectedAccount] = useState(0)
-  const firm = FIRMS_DATA[slug]
+
+  // Use DB data when available, fall back to hardcoded mock
+  const firm: FirmData | undefined = dbFirm ? fromDbFirm(dbFirm) : FIRMS_DATA[slug]
 
   if (!firm) {
     return (

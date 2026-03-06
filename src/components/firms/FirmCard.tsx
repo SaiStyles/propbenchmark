@@ -4,27 +4,9 @@ import Link from 'next/link'
 import { BadgeCheck, Users, Clock } from 'lucide-react'
 import StarRating from '@/components/ui/StarRating'
 import ProfitSplitArc from '@/components/ui/ProfitSplitArc'
+import type { Firm } from '@/lib/types'
 
-export type Firm = {
-  id: number
-  name: string
-  logo: string
-  rating: number
-  reviews: number
-  discount: number
-  tag: string
-  profitSplit: string
-  maxDrawdown: string
-  challengeFee: string
-  steps: number
-  instantFunding: boolean
-  weekendHolding: boolean
-  category: string
-  slug: string
-  featured?: boolean
-  verified?: boolean
-  paysWithin?: string
-}
+export type { Firm } from '@/lib/types'
 
 const EDITORIAL_TAGS = new Set(["EDITOR'S CHOICE", 'TOP RATED', 'FUTURES #1', 'BEST VALUE'])
 

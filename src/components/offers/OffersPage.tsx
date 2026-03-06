@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import OfferCard, { Offer } from './OfferCard'
+import type { Offer } from './OfferCard'
+import OfferCard from './OfferCard'
 
-const ALL_OFFERS: Offer[] = [
+const MOCK_OFFERS: Offer[] = [
   {
     id: 1, firmName: 'FTMO', firmLogo: 'F', firmSlug: 'ftmo',
     firmRating: 4.9, firmReviews: 2847, category: 'forex',
@@ -70,6 +71,8 @@ const ALL_OFFERS: Offer[] = [
   },
 ]
 
+type Props = { initialOffers?: Offer[] }
+
 const CATEGORIES = [
   { label: 'All Deals', value: 'all' },
   { label: 'Forex', value: 'forex' },
@@ -83,7 +86,8 @@ const SORT_OPTIONS = [
   { label: 'Most Reviews', value: 'reviews' },
 ]
 
-export default function OffersPage() {
+export default function OffersPage({ initialOffers }: Props) {
+  const ALL_OFFERS = initialOffers && initialOffers.length > 0 ? initialOffers : MOCK_OFFERS
   const [category, setCategory] = useState('all')
   const [sortBy, setSortBy] = useState('discount')
 

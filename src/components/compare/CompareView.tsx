@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Firm } from '@/components/firms/FirmCard'
+import type { Firm } from '@/lib/types'
 import CompareSelector from './CompareSelector'
 import CompareTable from './CompareTable'
 
-const ALL_FIRMS: Firm[] = [
+const MOCK_FIRMS: Firm[] = [
   {
     id: 1, name: 'FTMO', logo: 'F', rating: 4.9, reviews: 2847, discount: 10,
     tag: "EDITOR'S CHOICE", profitSplit: '90%', maxDrawdown: '10%',
@@ -61,7 +61,10 @@ const ALL_FIRMS: Firm[] = [
   },
 ]
 
-export default function CompareView() {
+type Props = { allFirms?: Firm[] }
+
+export default function CompareView({ allFirms }: Props) {
+  const ALL_FIRMS = allFirms && allFirms.length > 0 ? allFirms : MOCK_FIRMS
   const [selected, setSelected] = useState<string[]>([])
 
   const toggle = (slug: string) => {

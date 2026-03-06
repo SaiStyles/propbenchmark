@@ -1,0 +1,135 @@
+// ─── Raw Supabase row types (snake_case) ──────────────────────────────────────
+
+export type DbFirm = {
+  id: string
+  name: string
+  slug: string
+  logo_url: string | null
+  website: string | null
+  category: string | null
+  platforms: string[] | null
+  instruments: string[] | null
+  editor_rating: number | null
+  status: 'active' | 'warning' | 'closed'
+  affiliate_link: string | null
+  discount_code: string | null
+  discount_percent: number | null
+  description: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type DbAccountModel = {
+  id: string
+  firm_id: string
+  program_name: string
+  account_size: number
+  challenge_fee: number | null
+  activation_fee: number | null
+  profit_target: number | null
+  max_drawdown: number | null
+  daily_drawdown: number | null
+  profit_split: number | null
+  evaluation_steps: number | null
+  minimum_trading_days: number | null
+  consistency_rule: boolean
+  weekend_holding: boolean
+  news_trading: boolean
+  max_contracts: string | null
+  first_payout_days: number | null
+  payout_frequency: string | null
+  minimum_payout: number | null
+  scaling_available: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type DbProCon = {
+  id: string
+  firm_id: string
+  type: 'pro' | 'con'
+  text: string
+  created_at: string
+}
+
+// ─── UI types used by components ─────────────────────────────────────────────
+
+/** Account size row displayed in FirmDetail overview tab */
+export type AccountModel = {
+  size: string
+  fee: string
+  profitTarget: string
+  maxDrawdown: string
+  dailyDrawdown: string
+  programName?: string
+}
+
+/**
+ * Firm card/list shape — used by FirmCard, FirmsDirectory, CompareView,
+ * TopFirmsSection, RankingList. id is string | number to accept both UUIDs
+ * from Supabase and numeric mock data.
+ */
+export type Firm = {
+  id: string | number
+  name: string
+  logo: string
+  rating: number
+  reviews: number
+  discount: number
+  tag: string
+  profitSplit: string
+  maxDrawdown: string
+  challengeFee: string
+  steps: number
+  instantFunding: boolean
+  weekendHolding: boolean
+  category: string
+  slug: string
+  featured?: boolean
+  verified?: boolean
+  paysWithin?: string
+}
+
+/** Full detail data shape for /firms/[slug] — returned by getFirmBySlug() */
+export type FirmDetailData = {
+  name: string
+  logo: string
+  rating: number
+  reviews: number
+  discount: number
+  tag: string
+  discountCode: string
+  profitSplit: string
+  steps: number
+  payoutFreq: string
+  minPayout: string
+  countries: string
+  instantFunding: boolean
+  weekendHolding: boolean
+  platforms: string[]
+  instruments: string[]
+  description: string
+  pros: string[]
+  cons: string[]
+  accounts: AccountModel[]
+  affiliateLink?: string
+}
+
+/** Offer card shape — id is string | number for UUID/numeric compat */
+export type OfferData = {
+  id: string | number
+  firmName: string
+  firmLogo: string
+  firmSlug: string
+  firmRating: number
+  firmReviews: number
+  category: string
+  discount: number
+  code: string
+  description: string
+  tag: string
+  featured: boolean
+  affiliateUrl: string
+  savings: string
+  expires: string | null
+}

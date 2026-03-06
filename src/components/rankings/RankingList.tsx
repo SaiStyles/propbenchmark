@@ -4,7 +4,7 @@ import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
 
 export type RankedFirm = {
-  id: number
+  id: string | number
   name: string
   logo: string
   slug: string

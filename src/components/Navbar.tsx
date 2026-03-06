@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
     <nav style={{
@@ -41,16 +43,21 @@ export default function Navbar() {
           { label: 'Offers', href: '/offers' },
           { label: 'Rankings', href: '/rankings' },
           { label: 'Blog', href: '/blog' },
-        ].map(link => (
-          <Link key={link.href} href={link.href} style={{
-            padding: '6px 14px', borderRadius: '6px',
-            fontSize: '14px', fontWeight: 500, color: '#475569',
-            textDecoration: 'none', transition: 'color 0.15s',
-          }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#94a3b8')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
-          >{link.label}</Link>
-        ))}
+        ].map(link => {
+          const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href + '/'))
+          return (
+            <Link key={link.href} href={link.href} style={{
+              padding: '6px 14px', borderRadius: '6px',
+              fontSize: '14px', fontWeight: isActive ? 600 : 500,
+              color: isActive ? '#00ff88' : '#475569',
+              textDecoration: 'none', transition: 'color 0.15s',
+              borderBottom: isActive ? '2px solid #00ff88' : '2px solid transparent',
+            }}
+              onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#94a3b8' }}
+              onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#475569' }}
+            >{link.label}</Link>
+          )
+        })}
       </div>
 
       {/* CTA */}

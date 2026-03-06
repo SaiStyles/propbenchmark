@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Firm } from '@/lib/types'
 import CompareSelector from './CompareSelector'
 import CompareTable from './CompareTable'
+import { useMarketType } from '@/context/MarketTypeContext'
 
 const MOCK_FIRMS: Firm[] = [
   {
@@ -64,7 +65,11 @@ const MOCK_FIRMS: Firm[] = [
 type Props = { allFirms?: Firm[] }
 
 export default function CompareView({ allFirms }: Props) {
-  const ALL_FIRMS = allFirms && allFirms.length > 0 ? allFirms : MOCK_FIRMS
+  const { marketType } = useMarketType()
+  const baseFirms = allFirms && allFirms.length > 0 ? allFirms : MOCK_FIRMS
+  const ALL_FIRMS = baseFirms.filter(f =>
+    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex' || f.category === 'instant'
+  )
   const [selected, setSelected] = useState<string[]>([])
 
   const toggle = (slug: string) => {
@@ -94,15 +99,25 @@ export default function CompareView({ allFirms }: Props) {
         </p>
       </div>
 
-      <CompareSelector firms={ALL_FIRMS} selected={selected} onToggle={toggle} />
-
-      {selectedFirms.length >= 2 ? (
-        <CompareTable firms={selectedFirms} onRemove={toggle} />
-      ) : (
-        <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>
-          <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚖</div>
-          <p style={{ fontSize: '15px' }}>Select at least 2 firms above to start comparing</p>
+      {ALL_FIRMS.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <div style={{ fontSize: '32px', marginBottom: '16px', color: '#475569' }}>—</div>
+          <p style={{ fontSize: '15px', color: '#94a3b8' }}>
+            No {marketType === 'futures' ? 'Futures' : 'CFD / Forex'} firms available to compare.
+          </p>
         </div>
+      ) : (
+        <>
+          <CompareSelector firms={ALL_FIRMS} selected={selected} onToggle={toggle} />
+          {selectedFirms.length >= 2 ? (
+            <CompareTable firms={selectedFirms} onRemove={toggle} />
+          ) : (
+            <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>
+              <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚖</div>
+              <p style={{ fontSize: '15px' }}>Select at least 2 firms above to start comparing</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

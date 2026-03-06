@@ -4,6 +4,8 @@ import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { MarketTypeProvider } from '@/context/MarketTypeContext'
+import MarketToggle from '@/components/ui/MarketToggle'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -28,11 +30,14 @@ export default function RootLayout({
           fontFamily: 'var(--font-inter), Inter, sans-serif',
         }}
       >
-        <Navbar />
-        <main style={{ flex: 1 }}>
-          {children}
-        </main>
-        <Footer />
+        <MarketTypeProvider>
+          <Navbar />
+          <MarketToggle />
+          <main style={{ flex: 1 }}>
+            {children}
+          </main>
+          <Footer />
+        </MarketTypeProvider>
       </body>
     </html>
   )

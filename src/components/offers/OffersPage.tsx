@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Offer } from './OfferCard'
 import OfferCard from './OfferCard'
+import { useMarketType } from '@/context/MarketTypeContext'
 
 const MOCK_OFFERS: Offer[] = [
   {
@@ -73,13 +74,6 @@ const MOCK_OFFERS: Offer[] = [
 
 type Props = { initialOffers?: Offer[] }
 
-const CATEGORIES = [
-  { label: 'All Deals', value: 'all' },
-  { label: 'Forex', value: 'forex' },
-  { label: 'Futures', value: 'futures' },
-  { label: 'Instant Funding', value: 'instant' },
-]
-
 const SORT_OPTIONS = [
   { label: 'Highest Discount', value: 'discount' },
   { label: 'Best Rated', value: 'rating' },
@@ -87,12 +81,14 @@ const SORT_OPTIONS = [
 ]
 
 export default function OffersPage({ initialOffers }: Props) {
-  const ALL_OFFERS = initialOffers && initialOffers.length > 0 ? initialOffers : MOCK_OFFERS
-  const [category, setCategory] = useState('all')
+  const { marketType } = useMarketType()
+  const baseOffers = initialOffers && initialOffers.length > 0 ? initialOffers : MOCK_OFFERS
+  const ALL_OFFERS = baseOffers.filter(o =>
+    marketType === 'futures' ? o.category === 'futures' : o.category === 'forex' || o.category === 'instant'
+  )
   const [sortBy, setSortBy] = useState('discount')
 
   const filtered = ALL_OFFERS
-    .filter(o => category === 'all' || o.category === category)
     .sort((a, b) => {
       if (sortBy === 'discount') return b.discount - a.discount
       if (sortBy === 'rating') return b.firmRating - a.firmRating
@@ -154,32 +150,6 @@ export default function OffersPage({ initialOffers }: Props) {
         display: 'flex', gap: '10px', alignItems: 'center',
         marginBottom: '36px', flexWrap: 'wrap',
       }}>
-        {/* Category tabs */}
-        <div style={{
-          display: 'flex', gap: '4px',
-          background: '#0d1117',
-          border: '1px solid rgba(255,255,255,0.07)',
-          borderRadius: '10px', padding: '4px', flexWrap: 'wrap',
-        }}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.value}
-              onClick={() => setCategory(cat.value)}
-              style={{
-                padding: '7px 16px', borderRadius: '7px', border: 'none',
-                cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-                transition: 'all 0.15s',
-                background: category === cat.value ? 'rgba(0,255,136,0.1)' : 'transparent',
-                color: category === cat.value ? '#00ff88' : '#475569',
-              }}
-              onMouseEnter={e => { if (category !== cat.value) e.currentTarget.style.color = '#94a3b8' }}
-              onMouseLeave={e => { if (category !== cat.value) e.currentTarget.style.color = '#475569' }}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
         {/* Sort */}
         <select
           value={sortBy}
@@ -253,27 +223,7 @@ export default function OffersPage({ initialOffers }: Props) {
 
       {filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>
-          <p style={{ fontSize: '14px' }}>No offers in this category yet.</p>
-          <button
-            onClick={() => setCategory('all')}
-            style={{
-              marginTop: '16px', padding: '10px 24px',
-              border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px',
-              background: 'transparent', color: '#94a3b8',
-              cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-              transition: 'all 0.15s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = 'rgba(0,255,136,0.3)'
-              e.currentTarget.style.color = '#00ff88'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-              e.currentTarget.style.color = '#94a3b8'
-            }}
-          >
-            View All Deals
-          </button>
+          <p style={{ fontSize: '14px' }}>No offers available for this market yet.</p>
         </div>
       )}
 

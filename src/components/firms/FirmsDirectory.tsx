@@ -4,11 +4,15 @@ import { useState } from 'react'
 import type { Firm } from '@/lib/types'
 import FirmCard from './FirmCard'
 import FirmsFilter from './FirmsFilter'
+import { useMarketType } from '@/context/MarketTypeContext'
 
 type Props = { initialFirms: Firm[] }
 
 export default function FirmsDirectory({ initialFirms }: Props) {
-  const ALL_FIRMS = initialFirms
+  const { marketType } = useMarketType()
+  const ALL_FIRMS = initialFirms.filter(f =>
+    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex' || f.category === 'instant'
+  )
 
   const [filters, setFilters] = useState({
     search: '',

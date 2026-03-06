@@ -13,6 +13,7 @@ type Account = {
   profitTarget: string
   maxDrawdown: string
   dailyDrawdown: string
+  programName?: string
 }
 
 type Review = {

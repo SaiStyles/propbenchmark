@@ -17,7 +17,7 @@ export default function OffersPage({ initialOffers }: Props) {
   const { marketType } = useMarketType()
   const baseOffers = initialOffers ?? []
   const ALL_OFFERS = baseOffers.filter(o =>
-    marketType === 'futures' ? o.category === 'futures' : o.category === 'forex' || o.category === 'instant'
+    marketType === 'futures' ? o.category === 'futures' : o.category === 'forex'
   )
   const [sortBy, setSortBy] = useState('discount')
 

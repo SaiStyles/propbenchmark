@@ -11,7 +11,7 @@ type Props = { initialFirms: Firm[] }
 export default function FirmsDirectory({ initialFirms }: Props) {
   const { marketType } = useMarketType()
   const ALL_FIRMS = initialFirms.filter(f =>
-    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex' || f.category === 'instant'
+    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex'
   )
 
   const [filters, setFilters] = useState({

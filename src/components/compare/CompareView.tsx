@@ -12,7 +12,7 @@ export default function CompareView({ allFirms }: Props) {
   const { marketType } = useMarketType()
   const baseFirms = allFirms ?? []
   const ALL_FIRMS = baseFirms.filter(f =>
-    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex' || f.category === 'instant'
+    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex'
   )
   const [selected, setSelected] = useState<string[]>([])
 

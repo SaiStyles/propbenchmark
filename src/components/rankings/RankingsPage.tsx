@@ -2,153 +2,99 @@
 
 import { useState } from 'react'
 import type { Firm } from '@/lib/types'
-import RankingList, { RankingCategory } from './RankingList'
+import type { RankingFirmRow } from '@/lib/queries'
+import RankingList, { type RankingCategory } from './RankingList'
 import { useMarketType } from '@/context/MarketTypeContext'
 
-// ─── Editorial config — curated per-firm context only ────────────────────────
+// ─── Category metadata — no hardcoded firm slugs ──────────────────────────────
 
-type RankingFirmConfig = {
-  slug: string
-  tag: string
-  reason: string
-  highlight: { label: string; value: string }
-}
-
-type RankingCategoryConfig = {
+type CategoryMeta = {
   id: string
   label: string
   icon: string
   description: string
   metricLabel: string
-  firms: RankingFirmConfig[]
 }
 
-const RANKINGS_CONFIG: RankingCategoryConfig[] = [
+const CATEGORY_META: CategoryMeta[] = [
   {
-    id: 'best-overall',
+    id: 'best_overall',
     label: 'Best Overall',
     icon: '🏆',
     description: 'Composite score across rating, payout, trust, and community feedback. The definitive list.',
     metricLabel: 'Rating',
-    firms: [
-      { slug: 'ftmo', tag: "EDITOR'S CHOICE", reason: 'Gold standard for forex traders. Six years of consistent payouts, industry-leading trust score, and the most recognizable name in prop trading.', highlight: { label: 'Trust Score', value: '9.8 / 10' } },
-      { slug: 'funding-pips', tag: 'TOP RATED', reason: 'Top-tier 1-step challenge with elite payout consistency. Weekend holding and competitive fees make this a standout for active forex traders.', highlight: { label: 'Eval Steps', value: '1-Step' } },
-      { slug: 'the5ers', tag: 'LOW COST', reason: 'The only firm offering 100% profit split with a sub-$50 entry fee. A truly unique model for disciplined traders who want to keep everything they earn.', highlight: { label: 'Profit Split', value: '100%' } },
-      { slug: 'topstep', tag: 'FUTURES #1', reason: 'Most community-validated firm on the platform. The clear choice for futures traders with decade-long operational history.', highlight: { label: 'Reviews', value: '3,102' } },
-      { slug: 'apex-trader', tag: 'BEST VALUE', reason: 'Best cost-to-value ratio in futures. Frequent 25% discount promotions bring the fee to some of the lowest in the industry for a 90% split account.', highlight: { label: 'Discount', value: '25% OFF' } },
-      { slug: 'brightfunded', tag: 'RISING STAR', reason: 'Fast-growing firm with highly transparent operations and daily withdrawal availability. One to watch as it continues scaling its trader base.', highlight: { label: 'Payouts', value: 'Daily' } },
-    ],
   },
   {
-    id: 'best-beginners',
+    id: 'best_beginners',
     label: 'Best for Beginners',
     icon: '🌱',
     description: 'Lowest barriers to entry — minimal fees, simple rulesets, and forgiving evaluation structures.',
     metricLabel: 'Challenge Fee',
-    firms: [
-      { slug: 'the5ers', tag: 'LOW COST', reason: 'Lowest barrier to entry on the market. $39 to start, no time limit on the evaluation, and 100% profit split once funded. Perfect for traders still refining their edge.', highlight: { label: 'Entry Fee', value: '$39' } },
-      { slug: 'brightfunded', tag: 'RISING STAR', reason: 'Simple 1-step challenge with generous 10% max drawdown — one of the most forgiving evaluations available. Great for beginners who want a clear, single-phase process.', highlight: { label: 'Max DD', value: '10%' } },
-      { slug: 'funding-pips', tag: 'TOP RATED', reason: 'Clean 1-step evaluation with an 8% drawdown allowance and no minimum trading days. Straightforward rules make it easy to know exactly what you need to do.', highlight: { label: 'Eval Steps', value: '1-Step' } },
-      { slug: 'apex-trader', tag: 'BEST VALUE', reason: 'Ideal for beginners entering futures markets. Unlimited evaluation retries during promotional periods and a straightforward 1-step Combine evaluation.', highlight: { label: 'Retries', value: 'Unlimited' } },
-      { slug: 'thinkcapital', tag: '3-STEP VALUE', reason: 'The 3-step structure, while slower, teaches disciplined trading habits. The 12% max drawdown — widest in the industry — gives beginners maximum room to learn.', highlight: { label: 'Max DD', value: '12%' } },
-      { slug: 'ftmo', tag: "EDITOR'S CHOICE", reason: 'Extensive free resources, a free trial Challenge account, and the most documented ruleset in the industry. Higher fee, but you get the most supported learning environment.', highlight: { label: 'Free Trial', value: 'Yes' } },
-    ],
   },
   {
-    id: 'highest-split',
-    label: 'Highest Profit Split',
-    icon: '💰',
-    description: 'Ranked by how much of your profits you keep after passing the challenge. Every % matters.',
-    metricLabel: 'Profit Split',
-    firms: [
-      { slug: 'the5ers', tag: 'LOW COST', reason: 'The only verified firm offering a 100% profit split. You keep every dollar you earn — the firm monetizes through challenge fees and scaling plan purchases instead.', highlight: { label: 'Profit Split', value: '100%' } },
-      { slug: 'ftmo', tag: "EDITOR'S CHOICE", reason: '90% split on the most trusted platform in the industry. FTMO also offers a 10% add-on to reach 100% for top-performing traders in their scaling plan.', highlight: { label: 'Profit Split', value: '90%' } },
-      { slug: 'topstep', tag: 'FUTURES #1', reason: '90% split with no ongoing subscription fee after funding — you just pay to enter the Combine. A strong long-term income model for consistent futures traders.', highlight: { label: 'Profit Split', value: '90%' } },
-      { slug: 'apex-trader', tag: 'BEST VALUE', reason: '90% split in the futures space with the best promotional discounts. Lower effective cost than Topstep when accounting for frequent coupon offers.', highlight: { label: 'Profit Split', value: '90%' } },
-      { slug: 'funding-pips', tag: 'TOP RATED', reason: '85% split with one of the fastest payout cycles available — weekly. A strong choice for high-frequency traders who want regular access to their profits.', highlight: { label: 'Profit Split', value: '85%' } },
-      { slug: 'brightfunded', tag: 'RISING STAR', reason: '85% split with daily withdrawal availability — one of the fastest payout options in the market. Ideal for active traders who want frequent access to profits.', highlight: { label: 'Profit Split', value: '85%' } },
-    ],
-  },
-  {
-    id: 'best-futures',
-    label: 'Best Futures',
-    icon: '📈',
-    description: 'Top prop firms specifically for futures traders — CME, NQ, ES, CL, and more.',
-    metricLabel: 'Reviews',
-    firms: [
-      { slug: 'topstep', tag: 'FUTURES #1', reason: 'The original futures prop firm — over a decade of operations, the highest review count of any futures firm, and a consistent 90% payout record. The benchmark all others are measured against.', highlight: { label: 'Since', value: '2012' } },
-      { slug: 'apex-trader', tag: 'BEST VALUE', reason: 'Aggressive promotional discounts — often 25% or more off — make Apex the most affordable route to a futures funded account. 2,200+ reviews confirm consistent execution.', highlight: { label: 'Max Discount', value: '25% OFF' } },
-    ],
-  },
-  {
-    id: 'best-value',
+    id: 'best_value',
     label: 'Best Value',
     icon: '💎',
     description: 'Best challenge fee relative to profit split, drawdown limits, and evaluation difficulty.',
     metricLabel: 'Challenge Fee',
-    firms: [
-      { slug: 'the5ers', tag: 'LOW COST', reason: '$39 for access to a 100% profit split funded account. No other firm on the market comes close to this fee-to-payout ratio. The obvious choice for value-conscious traders.', highlight: { label: 'Fee', value: '$39' } },
-      { slug: 'brightfunded', tag: 'RISING STAR', reason: '$79 for a 1-step evaluation with 10% drawdown room and 85% split. Second-lowest entry fee for a quality evaluation structure. Strong value at every account tier.', highlight: { label: 'Fee', value: '$79' } },
-      { slug: 'funding-pips', tag: 'TOP RATED', reason: 'Under $100 for a 1-step challenge at a 4.8-rated firm. The combination of low cost and high trust score makes Funding Pips one of the best all-around value propositions.', highlight: { label: 'Fee', value: '$99' } },
-      { slug: 'thinkcapital', tag: '3-STEP VALUE', reason: '$109 with the most lenient drawdown rules in the industry at 12%. If you need maximum room to trade your strategy, ThinkCapital gives you the most runway per dollar.', highlight: { label: 'Max DD', value: '12%' } },
-      { slug: 'apex-trader', tag: 'BEST VALUE', reason: 'With 25% discount codes reducing the effective cost to ~$103, Apex delivers 90% split futures access at a sub-$110 effective fee. Top futures value when promotions apply.', highlight: { label: 'Effective Fee', value: '~$103' } },
-      { slug: 'ftmo', tag: "EDITOR'S CHOICE", reason: 'Higher fee reflects the premium brand and support system. For traders where trust and longevity matter above all else, the $155 entry to the #1-rated firm is justified.', highlight: { label: 'Rating', value: '4.9 ★' } },
-    ],
   },
   {
-    id: 'instant-funding',
-    label: 'Instant Funding',
-    icon: '⚡',
-    description: 'Skip the challenge entirely — get funded on day one. For experienced traders only.',
-    metricLabel: 'Entry Cost',
-    firms: [
-      { slug: 'alpha-capital', tag: 'INSTANT FUND', reason: 'The premier instant funding option — pay once, skip the evaluation, and start trading a funded account immediately. Best suited for consistently profitable traders with a proven track record.', highlight: { label: 'Funded In', value: 'Day 1' } },
-    ],
-  },
-  {
-    id: 'most-trusted',
+    id: 'most_trusted',
     label: 'Most Trusted',
     icon: '🛡️',
     description: 'Ranked by verified review count — the most community-validated firms on PropBenchmark.',
     metricLabel: 'Reviews',
-    firms: [
-      { slug: 'topstep', tag: 'FUTURES #1', reason: 'Most-reviewed prop firm on the platform. Verified trader reviews across a decade of operations speaks for itself — no other futures firm has this level of documented community trust.', highlight: { label: 'Reviews', value: '3,102' } },
-      { slug: 'ftmo', tag: "EDITOR'S CHOICE", reason: 'Highest-rated firm in the forex category with a 4.9 average. Six-year track record with no major payout disputes on record.', highlight: { label: 'Rating', value: '4.9 ★' } },
-      { slug: 'apex-trader', tag: 'BEST VALUE', reason: 'Over 2,000 verified reviews with a consistent 4.6 average. Strong track record for following through on payouts with transparent terms and no hidden restrictions.', highlight: { label: 'Reviews', value: '2,231' } },
-      { slug: 'funding-pips', tag: 'TOP RATED', reason: 'Nearly 2,000 reviews at a 4.8 rating — exceptional for a firm of its age. Known for responsive support and a clean withdrawal process with no unnecessary delays.', highlight: { label: 'Reviews', value: '1,923' } },
-      { slug: 'the5ers', tag: 'LOW COST', reason: '1,456 reviews at a 4.8 average — the highest review-to-fee ratio on this list. Traders are consistently happy with the 100% split model and the firm\'s long-term reliability.', highlight: { label: 'Reviews', value: '1,456' } },
-      { slug: 'alpha-capital', tag: 'INSTANT FUND', reason: 'Strong review count for an instant funding firm — most firms in this category have far fewer. Consistent payout record within the instant funding niche.', highlight: { label: 'Reviews', value: '867' } },
-    ],
+  },
+  {
+    id: 'instant_funding',
+    label: 'Instant Funding',
+    icon: '⚡',
+    description: 'Skip the challenge entirely — get funded on day one. For experienced traders only.',
+    metricLabel: 'Entry Cost',
+  },
+  {
+    id: 'highest_split',
+    label: 'Highest Profit Split',
+    icon: '💰',
+    description: 'Ranked by how much of your profits you keep after passing the challenge. Every % matters.',
+    metricLabel: 'Profit Split',
   },
 ]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function matchesMarketType(category: string, marketType: 'cfd' | 'futures'): boolean {
-  if (marketType === 'futures') return category === 'futures'
-  return category === 'forex' || category === 'instant'
+function matchesMarketType(firmCategory: string, marketType: 'cfd' | 'futures'): boolean {
+  if (marketType === 'futures') return firmCategory === 'futures'
+  return firmCategory === 'forex'
+}
+
+function buildHighestSplitFirms(firms: Firm[]): RankingCategory['firms'] {
+  return firms.map(f => ({
+    ...f,
+    reason: `Offers a ${f.profitSplit} profit split on funded accounts — among the highest available on the market.`,
+    highlight: { label: 'Profit Split', value: f.profitSplit },
+  }))
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-type Props = { initialFirms: Firm[] }
+type Props = {
+  rankingsData: Record<string, RankingFirmRow[]>
+  topProfitSplit: Firm[]
+}
 
-export default function RankingsPage({ initialFirms }: Props) {
-  const [activeId, setActiveId] = useState('best-overall')
+export default function RankingsPage({ rankingsData, topProfitSplit }: Props) {
+const [activeId, setActiveId] = useState('best_overall')
   const { marketType } = useMarketType()
 
-  const firmMap = new Map(initialFirms.map(f => [f.slug, f]))
+  const rankings: RankingCategory[] = CATEGORY_META.map(cat => {
+    const firms: RankingCategory['firms'] =
+      cat.id === 'highest_split'
+        ? buildHighestSplitFirms(topProfitSplit)
+        : (rankingsData[cat.id] ?? [])
 
-  const rankings: RankingCategory[] = RANKINGS_CONFIG.map(cat => ({
-    ...cat,
-    firms: cat.firms
-      .map(fc => {
-        const firm = firmMap.get(fc.slug)
-        if (!firm) return null
-        return { ...firm, reason: fc.reason, highlight: fc.highlight, tag: fc.tag }
-      })
-      .filter((f): f is NonNullable<typeof f> => f !== null),
-  }))
+    return { ...cat, firms }
+  })
 
   const activeRanking = rankings.find(r => r.id === activeId) ?? rankings[0]
 
@@ -156,7 +102,10 @@ export default function RankingsPage({ initialFirms }: Props) {
     ? activeRanking.firms.filter(f => matchesMarketType(f.category, marketType))
     : []
 
-  const marketLabel = marketType === 'futures' ? 'Futures' : 'CFD / Forex'
+  const marketLabel = marketType === 'futures' ? 'Futures' : 'Forex'
+
+  const hasAnyData =
+    Object.keys(rankingsData).length > 0 || topProfitSplit.length > 0
 
   return (
     <div>
@@ -170,7 +119,7 @@ export default function RankingsPage({ initialFirms }: Props) {
           letterSpacing: '1px', fontWeight: 600,
           marginBottom: '16px',
         }}>
-          {RANKINGS_CONFIG.length} RANKING CATEGORIES
+          {CATEGORY_META.length} RANKING CATEGORIES
         </div>
         <h1 style={{
           fontSize: 'clamp(28px, 4vw, 42px)',
@@ -203,7 +152,7 @@ export default function RankingsPage({ initialFirms }: Props) {
           overflowX: 'auto',
           scrollbarWidth: 'none',
         }}>
-          {RANKINGS_CONFIG.map(r => {
+          {CATEGORY_META.map(r => {
             const isActive = r.id === activeId
             return (
               <button
@@ -239,7 +188,7 @@ export default function RankingsPage({ initialFirms }: Props) {
       {/* Active ranking content */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 96px' }}>
 
-        {initialFirms.length === 0 ? (
+        {!hasAnyData ? (
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
             <div style={{ fontSize: '32px', marginBottom: '16px' }}>—</div>
             <p style={{ fontSize: '15px', color: '#94a3b8' }}>Rankings are unavailable right now. Please check back shortly.</p>

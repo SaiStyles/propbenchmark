@@ -241,11 +241,101 @@ export async function getOffers(): Promise<OfferData[]> {
   }
 }
 
+/** Extended Firm row with editorial fields from firm_rankings table. */
+export type RankingFirmRow = Firm & {
+  reason: string
+  highlight: { label: string; value: string }
+}
+
 /**
- * Firms for the rankings page — same as getFirms(), sorted by rating.
- * Editorial ranking structure (categories, reasons, highlights) lives in
- * the component as curated content.
+ * All active firm_rankings joined with firms + account_models, grouped by
+ * ranking category and sorted by position ascending.
  */
-export async function getRankings(): Promise<Firm[]> {
-  return getFirms()
+export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
+  try {
+    const supabase = await createServerSupabaseClient()
+
+    const [{ data, error }, reviewMap] = await Promise.all([
+      supabase
+        .from('firm_rankings')
+        .select(`
+          category, position,
+          firms (
+            id, name, slug, logo_url, category, editor_rating, discount_percent, status,
+            account_models (
+              account_size, challenge_fee, profit_split, max_drawdown,
+              evaluation_steps, weekend_holding, first_payout_days
+            )
+          )
+        `)
+        .order('position', { ascending: true }),
+      getReviewMap(supabase),
+    ])
+
+    if (error || !data?.length) return {}
+
+    const result: Record<string, RankingFirmRow[]> = {}
+
+    for (const row of data as any[]) {
+      const firm = row.firms
+      if (!firm || firm.status !== 'active') continue
+
+      const mapped = mapFirmCard(firm, false, reviewMap.get(firm.id) ?? 0)
+      const ranked: RankingFirmRow = {
+        ...mapped,
+        tag: '',
+        reason: '',
+        highlight: { label: '', value: '' },
+      }
+
+      const cat: string = row.category
+      if (!result[cat]) result[cat] = []
+      result[cat].push(ranked)
+    }
+
+    return result
+  } catch {
+    return {}
+  }
+}
+
+/**
+ * Top 10 active firms sorted by highest profit split (across all their
+ * account models), descending.
+ */
+export async function getTopProfitSplit(): Promise<Firm[]> {
+  try {
+    const supabase = await createServerSupabaseClient()
+
+    const [{ data, error }, reviewMap] = await Promise.all([
+      supabase
+        .from('firms')
+        .select(`
+          id, name, slug, logo_url, category, editor_rating, discount_percent,
+          account_models (
+            account_size, challenge_fee, profit_split, max_drawdown,
+            evaluation_steps, weekend_holding, first_payout_days
+          )
+        `)
+        .eq('status', 'active'),
+      getReviewMap(supabase),
+    ])
+
+    if (error || !data?.length) return []
+
+    return data
+      .map((firm: any) => {
+        const models: DbAccountModel[] = firm.account_models ?? []
+        const maxSplit = models.length > 0
+          ? Math.max(...models.map(m => m.profit_split ?? 0))
+          : 0
+        return { firm, maxSplit, reviewCount: reviewMap.get(firm.id) ?? 0 }
+      })
+      .filter(x => x.maxSplit > 0)
+      .sort((a, b) => b.maxSplit - a.maxSplit)
+      .slice(0, 10)
+      .map(({ firm, reviewCount }) => mapFirmCard(firm, false, reviewCount))
+  } catch {
+    return []
+  }
 }

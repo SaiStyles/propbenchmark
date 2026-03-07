@@ -5,73 +5,6 @@ import type { Offer } from './OfferCard'
 import OfferCard from './OfferCard'
 import { useMarketType } from '@/context/MarketTypeContext'
 
-const MOCK_OFFERS: Offer[] = [
-  {
-    id: 1, firmName: 'FTMO', firmLogo: 'F', firmSlug: 'ftmo',
-    firmRating: 4.9, firmReviews: 2847, category: 'forex',
-    discount: 10, code: 'BENCHMARK10',
-    description: '10% off all FTMO Challenge accounts. Applies to Standard and Aggressive plans.',
-    tag: 'EXCLUSIVE', featured: true, affiliateUrl: '#',
-    savings: 'Save up to $15.50 on $155 plan', expires: null,
-  },
-  {
-    id: 2, firmName: 'Apex Trader', firmLogo: 'AT', firmSlug: 'apex-trader',
-    firmRating: 4.6, firmReviews: 2231, category: 'futures',
-    discount: 25, code: 'APEX25PB',
-    description: '25% off Apex Trader Combine subscription. Best futures deal on PropBenchmark.',
-    tag: 'BEST DEAL', featured: true, affiliateUrl: '#',
-    savings: 'Save $34.25 on $137 plan', expires: 'Mar 31, 2026',
-  },
-  {
-    id: 3, firmName: 'Topstep', firmLogo: 'TS', firmSlug: 'topstep',
-    firmRating: 4.7, firmReviews: 3102, category: 'futures',
-    discount: 20, code: 'PROPBENCH20',
-    description: '20% off your first month of Topstep Trading Combine. Top-rated futures firm.',
-    tag: 'LIMITED TIME', featured: false, affiliateUrl: '#',
-    savings: 'Save $33 on $165 plan', expires: 'Apr 15, 2026',
-  },
-  {
-    id: 4, firmName: 'Funding Pips', firmLogo: 'FP', firmSlug: 'funding-pips',
-    firmRating: 4.8, firmReviews: 1923, category: 'forex',
-    discount: 15, code: 'BENCH15',
-    description: '15% off all Funding Pips 1-step challenge accounts. Fast-track to funding.',
-    tag: 'EXCLUSIVE', featured: false, affiliateUrl: '#',
-    savings: 'Save $14.85 on $99 plan', expires: null,
-  },
-  {
-    id: 5, firmName: 'BrightFunded', firmLogo: 'BF', firmSlug: 'brightfunded',
-    firmRating: 4.5, firmReviews: 643, category: 'forex',
-    discount: 15, code: 'BRIGHT15',
-    description: '15% off BrightFunded challenge. Rising star in the prop firm space.',
-    tag: 'NEW OFFER', featured: false, affiliateUrl: '#',
-    savings: 'Save $11.85 on $79 plan', expires: null,
-  },
-  {
-    id: 6, firmName: 'Alpha Capital', firmLogo: 'AC', firmSlug: 'alpha-capital',
-    firmRating: 4.4, firmReviews: 867, category: 'instant',
-    discount: 15, code: 'ALPHAPB15',
-    description: '15% off Alpha Capital instant funding accounts. Skip the challenge entirely.',
-    tag: 'INSTANT ONLY', featured: false, affiliateUrl: '#',
-    savings: 'Save $44.85 on $299 plan', expires: null,
-  },
-  {
-    id: 7, firmName: 'ThinkCapital', firmLogo: 'TC', firmSlug: 'thinkcapital',
-    firmRating: 4.3, firmReviews: 512, category: 'forex',
-    discount: 25, code: 'THINK25',
-    description: '25% off ThinkCapital 3-step challenge. Great for traders who want lower targets.',
-    tag: 'BEST VALUE', featured: false, affiliateUrl: '#',
-    savings: 'Save $27.25 on $109 plan', expires: 'May 1, 2026',
-  },
-  {
-    id: 8, firmName: 'The5ers', firmLogo: '5', firmSlug: 'the5ers',
-    firmRating: 4.8, firmReviews: 1456, category: 'forex',
-    discount: 5, code: 'BENCH5',
-    description: '5% off The5ers challenge. 100% profit split firm with very low fees.',
-    tag: 'VERIFIED', featured: false, affiliateUrl: '#',
-    savings: 'Save $1.95 on $39 plan', expires: null,
-  },
-]
-
 type Props = { initialOffers?: Offer[] }
 
 const SORT_OPTIONS = [
@@ -82,7 +15,7 @@ const SORT_OPTIONS = [
 
 export default function OffersPage({ initialOffers }: Props) {
   const { marketType } = useMarketType()
-  const baseOffers = initialOffers && initialOffers.length > 0 ? initialOffers : MOCK_OFFERS
+  const baseOffers = initialOffers ?? []
   const ALL_OFFERS = baseOffers.filter(o =>
     marketType === 'futures' ? o.category === 'futures' : o.category === 'forex' || o.category === 'instant'
   )
@@ -99,9 +32,9 @@ export default function OffersPage({ initialOffers }: Props) {
   const featured = filtered.filter(o => o.featured)
   const rest = filtered.filter(o => !o.featured)
 
-  const avgDiscount = Math.round(
-    ALL_OFFERS.reduce((sum, o) => sum + o.discount, 0) / ALL_OFFERS.length
-  )
+  const avgDiscount = ALL_OFFERS.length > 0
+    ? Math.round(ALL_OFFERS.reduce((sum, o) => sum + o.discount, 0) / ALL_OFFERS.length)
+    : 0
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 96px' }}>

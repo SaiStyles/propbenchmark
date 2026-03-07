@@ -12,4 +12,4 @@ export default async function Rankings() {
     getTopProfitSplit(),
   ])
   return <RankingsPage rankingsData={rankingsData} topProfitSplit={topProfitSplit} />
-}
+} 

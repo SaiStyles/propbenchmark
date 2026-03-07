@@ -1,5 +1,5 @@
 'use client'
-
+ 
 import { useState } from 'react'
 import type { Firm } from '@/lib/types'
 import type { RankingFirmRow } from '@/lib/queries'

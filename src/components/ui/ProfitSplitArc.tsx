@@ -4,7 +4,8 @@ type Props = {
 }
 
 export default function ProfitSplitArc({ percent, size = 36 }: Props) {
-  const value = parseFloat(percent) / 100
+  const safeValue = isNaN(Number(parseFloat(percent))) ? 0 : parseFloat(percent)
+  const value = safeValue / 100
   const r = 13
   const cx = size / 2
   const cy = size / 2

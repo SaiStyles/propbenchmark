@@ -62,3 +62,23 @@ CREATE POLICY "public_read_offers"
   FOR SELECT
   TO anon, authenticated
   USING (true);
+
+-- ── firm_rankings ─────────────────────────────────────────────────────────────
+ALTER TABLE firm_rankings ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "public_read_firm_rankings" ON firm_rankings;
+CREATE POLICY "public_read_firm_rankings"
+  ON firm_rankings
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+-- ── blog_posts ─────────────────────────────────────────────────────────────────
+ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "public_read_published_blog_posts" ON blog_posts;
+CREATE POLICY "public_read_published_blog_posts"
+  ON blog_posts
+  FOR SELECT
+  TO anon, authenticated
+  USING (published = true);

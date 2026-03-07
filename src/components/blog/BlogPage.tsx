@@ -2,169 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type BlogPost = {
-  slug: string
-  title: string
-  category: string
-  excerpt: string
-  author: string
-  date: string
-  readTime: string
-  featured: boolean
-  statHighlight: string | null
-}
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const BLOG_POSTS: BlogPost[] = [
-  {
-    slug: 'ftmo-vs-myfundedfx-2025',
-    title: 'FTMO vs MyFundedFX: Which Firm Actually Pays Out?',
-    category: 'Comparisons',
-    excerpt:
-      'We analyzed 6 months of payout data, trader testimonials, and rule changes to settle the debate.',
-    author: 'Benchmark Team',
-    date: 'Mar 4, 2026',
-    readTime: '8 min',
-    featured: true,
-    statHighlight: null,
-  },
-  {
-    slug: 'how-to-pass-prop-challenge-drawdown',
-    title: 'The Drawdown Trap: Why 68% of Traders Fail Their First Challenge',
-    category: 'Challenge Guides',
-    excerpt:
-      'Understanding trailing vs end-of-day drawdown is the single biggest edge you can have before paying for an evaluation.',
-    author: 'Benchmark Team',
-    date: 'Feb 28, 2026',
-    readTime: '6 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'apex-trader-payout-stats-2026',
-    title: 'Apex Trader Funding: $56M Paid in 90 Days — What the Data Actually Shows',
-    category: 'Payouts & Data',
-    excerpt:
-      "Breaking down Apex's payout claims with verified data, trader reports, and what the numbers mean for new applicants.",
-    author: 'Benchmark Team',
-    date: 'Feb 22, 2026',
-    readTime: '5 min',
-    featured: false,
-    statHighlight: '$56M in 90-day payouts',
-  },
-  {
-    slug: 'ftmo-oanda-acquisition-impact',
-    title: 'FTMO Acquired OANDA: What It Means for Funded Traders',
-    category: 'Industry News',
-    excerpt:
-      'The biggest prop firm acquisition in history just happened. We break down the implications for traders, liquidity, and the industry.',
-    author: 'Benchmark Team',
-    date: 'Feb 18, 2026',
-    readTime: '7 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'best-prop-firms-scalpers-2026',
-    title: 'Best Prop Firms for Scalpers in 2026 (Tested & Ranked)',
-    category: 'Comparisons',
-    excerpt:
-      'Not every firm tolerates fast execution. We ranked 9 firms by scalping rules, latency tolerance, and real trader feedback.',
-    author: 'Benchmark Team',
-    date: 'Feb 14, 2026',
-    readTime: '10 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'trading-journal-habit-funded-trader',
-    title: 'The Journal Habit That Separates Funded Traders from the Rest',
-    category: 'Trading Psychology',
-    excerpt:
-      "Data from 500+ funded trader interviews points to one consistent habit. It's not the strategy — it's the journal.",
-    author: 'Benchmark Team',
-    date: 'Feb 10, 2026',
-    readTime: '5 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'prop-firm-closures-2024-what-happened',
-    title: "80+ Prop Firms Closed in 2024: What Traders Need to Learn",
-    category: 'Industry News',
-    excerpt:
-      "The mass closure of prop firms in 2024 wasn't random. We examined the patterns and what red flags to watch for.",
-    author: 'Benchmark Team',
-    date: 'Feb 5, 2026',
-    readTime: '9 min',
-    featured: false,
-    statHighlight: '80+ firms closed',
-  },
-  {
-    slug: 'topstep-review-2026',
-    title: 'Topstep Review 2026: Pass Rates, Payouts, and the Fine Print',
-    category: 'Firm Reviews',
-    excerpt:
-      'Topstep remains one of the most recognized futures prop firms. But is 12.4% pass rate a feature or a warning?',
-    author: 'Benchmark Team',
-    date: 'Jan 30, 2026',
-    readTime: '11 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'instant-funding-vs-challenge-model',
-    title: 'Instant Funding vs Challenge Model: Which is Actually Better?',
-    category: 'Challenge Guides',
-    excerpt:
-      'Instant funding sounds appealing. But the profit splits, hidden rules, and withdrawal gates tell a different story.',
-    author: 'Benchmark Team',
-    date: 'Jan 25, 2026',
-    readTime: '7 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'prop-firm-pass-rates-2026',
-    title: 'Prop Firm Pass Rate Benchmarks: The Industry Data You Need',
-    category: 'Payouts & Data',
-    excerpt:
-      'Industry average is 5-10%. Apex claims 15-20%. We compiled verified pass rate data across 12 firms for comparison.',
-    author: 'Benchmark Team',
-    date: 'Jan 20, 2026',
-    readTime: '6 min',
-    featured: false,
-    statHighlight: '5–20% industry pass rates',
-  },
-  {
-    slug: 'risk-management-rules-prop-trading',
-    title: '0.5% Per Trade: The Risk Rule That Keeps Traders Funded',
-    category: 'Trading Psychology',
-    excerpt:
-      "Funded traders who last consistently risk less per trade than those who wash out. The math is simple — the discipline isn't.",
-    author: 'Benchmark Team',
-    date: 'Jan 15, 2026',
-    readTime: '4 min',
-    featured: false,
-    statHighlight: null,
-  },
-  {
-    slug: 'fundednext-review-2026',
-    title: 'FundedNext Review 2026: The Firm That Went Broker',
-    category: 'Firm Reviews',
-    excerpt:
-      'FundedNext now operates a brokerage under Comoros registration. We dig into what changed and whether it\'s still worth it.',
-    author: 'Benchmark Team',
-    date: 'Jan 10, 2026',
-    readTime: '8 min',
-    featured: false,
-    statHighlight: null,
-  },
-]
+import type { BlogPost } from '@/lib/queries'
 
 const CATEGORIES = [
   'All',
@@ -202,11 +40,9 @@ function CategoryChip({ category }: { category: string }) {
 }
 
 function PostMeta({
-  author,
   date,
   readTime,
 }: {
-  author: string
   date: string
   readTime: string
 }) {
@@ -233,8 +69,6 @@ function PostMeta({
         flexWrap: 'wrap',
       }}
     >
-      <span>{author}</span>
-      {dot}
       <span>{date}</span>
       {dot}
       <span>{readTime} read</span>
@@ -294,7 +128,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
           {post.excerpt}
         </p>
 
-        <PostMeta author={post.author} date={post.date} readTime={post.readTime} />
+        <PostMeta date={post.date} readTime={post.readTime} />
 
         <div>
           <span
@@ -504,7 +338,7 @@ function PostCard({ post }: { post: BlogPost }) {
           {post.excerpt}
         </p>
 
-        <PostMeta author={post.author} date={post.date} readTime={post.readTime} />
+        <PostMeta date={post.date} readTime={post.readTime} />
       </div>
     </Link>
   )
@@ -644,7 +478,7 @@ function NewsletterStrip() {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function BlogPage() {
+export default function BlogPage({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [activeCategory, setActiveCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -654,18 +488,20 @@ export default function BlogPage() {
     post.title.toLowerCase().includes(q) ||
     post.excerpt.toLowerCase().includes(q)
 
-  const featuredPost = BLOG_POSTS.find(p => p.featured)!
+  const featuredPost = initialPosts.find(p => p.featured) ?? null
   const showFeatured =
+    featuredPost !== null &&
     (activeCategory === 'All' || activeCategory === featuredPost.category) &&
     matchesSearch(featuredPost)
 
-  const gridPosts = BLOG_POSTS.filter(p => {
+  const gridPosts = initialPosts.filter(p => {
     if (p.featured) return false
     if (activeCategory !== 'All' && p.category !== activeCategory) return false
     return matchesSearch(p)
   })
 
   const isEmpty = !showFeatured && gridPosts.length === 0
+  const noData = initialPosts.length === 0
 
   return (
     <div>
@@ -823,8 +659,20 @@ export default function BlogPage() {
       {/* ── Main Content ─────────────────────────────────────────────────── */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 96px' }}>
 
+        {/* DB empty state */}
+        {noData && (
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '2px', color: '#475569', textTransform: 'uppercase', marginBottom: '12px' }}>
+              No posts yet
+            </div>
+            <p style={{ fontSize: '14px', color: '#94a3b8' }}>
+              The blog is coming soon — check back shortly.
+            </p>
+          </div>
+        )}
+
         {/* Featured Post */}
-        {showFeatured && (
+        {showFeatured && featuredPost && (
           <div className="anim-fade-up" style={{ marginBottom: '56px' }}>
             <div
               style={{

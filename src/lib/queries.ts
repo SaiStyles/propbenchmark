@@ -299,6 +299,124 @@ export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
   }
 }
 
+// ─── Blog ─────────────────────────────────────────────────────────────────────
+
+export type BlogPost = {
+  slug: string
+  title: string
+  category: string
+  excerpt: string
+  date: string
+  readTime: string
+  featured: boolean
+  statHighlight: string | null
+}
+
+export type BlogPostDetail = BlogPost & {
+  content: string
+}
+
+/** All published blog posts ordered by date descending. Returns [] on any error. */
+export async function getBlogPosts(): Promise<BlogPost[]> {
+  try {
+    const supabase = await createServerSupabaseClient()
+
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('[getBlogPosts] Supabase error:', JSON.stringify(error), error?.message, error?.code, error?.details)
+      return []
+    }
+
+    if (!data?.length) return []
+
+    return data.map((row: any) => ({
+      slug: row.slug,
+      title: row.title,
+      category: row.category ?? '',
+      excerpt: row.excerpt ?? '',
+      date: row.created_at
+        ? new Date(row.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '',
+      readTime: row.read_time ?? '',
+      featured: row.featured ?? false,
+      statHighlight: row.stat_highlight ?? null,
+    }))
+  } catch (err) {
+    console.error('[getBlogPosts] Unexpected error:', err)
+    return []
+  }
+}
+
+/** Single published blog post by slug. Returns null if not found or unpublished. */
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | null> {
+  try {
+    const supabase = await createServerSupabaseClient()
+
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('published', true)
+      .single()
+
+    if (error || !data) return null
+
+    return {
+      slug: data.slug,
+      title: data.title,
+      category: data.category ?? '',
+      excerpt: data.excerpt ?? '',
+      date: data.created_at
+        ? new Date(data.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '',
+      readTime: data.read_time ?? '',
+      featured: data.featured ?? false,
+      statHighlight: data.stat_highlight ?? null,
+      content: data.content ?? '',
+    }
+  } catch {
+    return null
+  }
+}
+
+/** Up to 3 published posts in the same category, excluding the current post. */
+export async function getRelatedPosts(category: string, excludeSlug: string): Promise<BlogPost[]> {
+  try {
+    const supabase = await createServerSupabaseClient()
+
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('published', true)
+      .eq('category', category)
+      .neq('slug', excludeSlug)
+      .order('created_at', { ascending: false })
+      .limit(3)
+
+    if (error || !data?.length) return []
+
+    return data.map((row: any) => ({
+      slug: row.slug,
+      title: row.title,
+      category: row.category ?? '',
+      excerpt: row.excerpt ?? '',
+      date: row.created_at
+        ? new Date(row.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '',
+      readTime: row.read_time ?? '',
+      featured: row.featured ?? false,
+      statHighlight: row.stat_highlight ?? null,
+    }))
+  } catch {
+    return []
+  }
+}
+
 /**
  * Top 10 active firms sorted by highest profit split (across all their
  * account models), descending.

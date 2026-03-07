@@ -1,14 +1,160 @@
 'use client'
 import Link from 'next/link'
+import { useState } from 'react'
+import { createClient } from '@/lib/supabase'
+
+function NewsletterStrip() {
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [btnHovered, setBtnHovered] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const supabase = createClient()
+      const { error: dbError } = await supabase
+        .from('subscribers')
+        .insert({ email: email.trim() })
+
+      if (dbError) {
+        if (dbError.code === '23505') {
+          setError("You're already subscribed.")
+        } else {
+          setError('Something went wrong. Try again.')
+        }
+      } else {
+        setSubmitted(true)
+        setEmail('')
+      }
+    } catch {
+      setError('Something went wrong. Try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div style={{
+      background: '#0d1829',
+      borderTop: '1px solid rgba(255,255,255,0.05)',
+      borderBottom: '1px solid rgba(255,255,255,0.05)',
+      padding: '72px 24px',
+    }}>
+      <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ width: '40px', height: '2px', background: '#00ff88', margin: '0 auto 20px' }} />
+
+        <h2 style={{
+          fontSize: 'clamp(22px, 3vw, 32px)',
+          fontWeight: 800,
+          color: '#f1f5f9',
+          marginBottom: '12px',
+          fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
+          letterSpacing: '-0.3px',
+          lineHeight: 1.15,
+        }}>
+          Stay ahead of the prop firm space.
+        </h2>
+
+        <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '32px', lineHeight: 1.7 }}>
+          Weekly digest: firm changes, new offers, pass rate data, and analysis.
+        </p>
+
+        {submitted ? (
+          <div style={{
+            color: '#00ff88',
+            fontSize: '14px',
+            fontWeight: 600,
+            padding: '16px 20px',
+            background: 'rgba(0,255,136,0.06)',
+            border: '1px solid rgba(0,255,136,0.2)',
+            borderRadius: '10px',
+          }}>
+            You&apos;re in! We&apos;ll be in touch.
+          </div>
+        ) : (
+          <>
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: 'flex', gap: '10px', maxWidth: '440px', margin: '0 auto' }}
+            >
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setError('') }}
+                disabled={loading}
+                style={{
+                  flex: 1,
+                  background: '#0d1117',
+                  border: `1px solid ${error ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  color: '#f1f5f9',
+                  fontSize: '14px',
+                  outline: 'none',
+                  minWidth: 0,
+                  opacity: loading ? 0.6 : 1,
+                }}
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                onMouseEnter={() => setBtnHovered(true)}
+                onMouseLeave={() => setBtnHovered(false)}
+                style={{
+                  background: loading ? '#00cc6a' : btnHovered ? '#00cc6a' : '#00ff88',
+                  color: '#060b14',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '12px 22px',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  whiteSpace: 'nowrap',
+                  transition: 'background 0.15s',
+                  flexShrink: 0,
+                  opacity: loading ? 0.8 : 1,
+                }}
+              >
+                {loading ? 'Subscribing…' : 'Subscribe'}
+              </button>
+            </form>
+
+            {error && (
+              <p style={{ fontSize: '13px', color: '#ef4444', marginTop: '10px' }}>
+                {error}
+              </p>
+            )}
+          </>
+        )}
+
+        <p style={{ fontSize: '12px', color: '#475569', marginTop: '16px' }}>
+          No spam. Unsubscribe anytime.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 export default function Footer() {
   return (
-    <footer style={{
-      borderTop: '1px solid rgba(255,255,255,0.06)',
-      background: '#060b14',
-      padding: '56px 24px 36px',
-      marginTop: 'auto',
-    }}>
+    <footer style={{ marginTop: 'auto' }}>
+      <NewsletterStrip />
+      <div style={{
+        background: '#060b14',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        padding: '56px 24px 36px',
+      }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {/* Top row */}
         <div style={{
@@ -46,7 +192,7 @@ export default function Footer() {
               title: 'Content',
               links: [
                 { label: 'Blog', href: '/blog' },
-                { label: 'Reviews', href: '/reviews' },
+                { label: 'Reviews', href: '/blog?category=Firm+Reviews' },
               ],
             },
             {
@@ -102,6 +248,7 @@ export default function Footer() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </footer>
   )

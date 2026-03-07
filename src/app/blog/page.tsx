@@ -7,7 +7,10 @@ export const metadata = {
     'Prop firm reviews, challenge guides, payout data, industry news, and trading psychology — curated by the PropBenchmark team.',
 }
 
-export default async function Blog() {
+type Props = { searchParams: Promise<{ category?: string }> }
+
+export default async function Blog({ searchParams }: Props) {
+  const { category } = await searchParams
   const posts = await getBlogPosts()
-  return <BlogPage initialPosts={posts} />
+  return <BlogPage initialPosts={posts} initialCategory={category ?? 'All'} />
 }

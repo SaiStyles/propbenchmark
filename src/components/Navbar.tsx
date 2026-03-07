@@ -23,7 +23,7 @@ export default function Navbar() {
       justifyContent: 'space-between',
     }}>
       {/* Logo */}
-      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flex: 1 }}>
         <div style={{
           width: '36px', height: '36px',
           background: 'linear-gradient(135deg, #00ff88, #00cc6a)',
@@ -60,16 +60,9 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* CTA */}
-      <Link href="/login" style={{
-        padding: '8px 20px',
-        background: '#00ff88',
-        color: '#060b14',
-        borderRadius: '8px',
-        fontWeight: 700,
-        fontSize: '14px',
-        textDecoration: 'none',
-      }}>Sign In</Link>
+      {/* Spacer — mirrors logo width to keep links centered */}
+      <div style={{ flex: 1 }} />
+
     </nav>
   )
 }

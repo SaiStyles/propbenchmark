@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { BadgeCheck, Users, Clock } from 'lucide-react'
 import StarRating from '@/components/ui/StarRating'
-import ProfitSplitArc from '@/components/ui/ProfitSplitArc'
 import type { Firm } from '@/lib/types'
 
 export type { Firm } from '@/lib/types'
@@ -128,10 +127,7 @@ export default function FirmCard({ firm, index }: Props) {
           border: '1px solid rgba(255,255,255,0.05)',
         }}>
           <div style={{ fontSize: '10px', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Split</div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', marginTop: '3px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: '#00ff88' }}>{firm.profitSplit}</div>
-            <ProfitSplitArc percent={firm.profitSplit} size={20} />
-          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: '#00ff88', marginTop: '3px' }}>{firm.profitSplit}</div>
         </div>
         {/* Max Drawdown — amber */}
         <div style={{

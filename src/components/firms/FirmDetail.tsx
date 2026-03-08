@@ -7,7 +7,7 @@ import ProfitSplitArc from '@/components/ui/ProfitSplitArc'
 import DrawdownBar from '@/components/ui/DrawdownBar'
 import type { FirmDetailData } from '@/lib/types'
 
-const TABS = ['Overview', 'Rules', 'Reviews', 'Platforms']
+const TABS = ['Overview', 'Reviews', 'Platforms']
 const EDITORIAL_TAGS = new Set(["EDITOR'S CHOICE", 'TOP RATED', 'FUTURES #1', 'BEST VALUE'])
 
 function parsePercent(s: string): number {
@@ -244,7 +244,7 @@ export default function FirmDetail({ dbFirm }: Props) {
           </div>
 
           {/* Pros & Cons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
             <div style={{
               background: '#0d1117',
               border: '1px solid rgba(255,255,255,0.07)',
@@ -288,32 +288,52 @@ export default function FirmDetail({ dbFirm }: Props) {
               ))}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Rules Tab */}
-      {activeTab === 'Rules' && (
-        <div style={{ display: 'grid', gap: '8px' }}>
-          {[
-            { label: 'Weekend Holding', value: firm.weekendHolding ? 'Allowed' : 'Not Allowed', positive: firm.weekendHolding },
-            { label: 'Instant Funding', value: firm.instantFunding ? 'Available' : 'Evaluation Required', positive: firm.instantFunding },
-            { label: 'Countries', value: firm.countries },
-            { label: 'Instruments', value: firm.instruments.join(', ') },
-            { label: 'Evaluation Steps', value: firm.steps === 0 ? 'Instant — No Evaluation' : `${firm.steps}-Step Evaluation` },
-          ].map(({ label, value, positive }) => (
-            <div key={label} style={{
+          {/* Rules */}
+          <div style={{
+            fontSize: '11px', color: '#475569',
+            marginBottom: '12px', fontWeight: 600,
+            textTransform: 'uppercase', letterSpacing: '1px',
+          }}>Rules</div>
+          <div style={{ display: 'grid', gap: '8px' }}>
+            {[
+              { label: 'Weekend Holding', value: firm.weekendHolding ? 'Allowed' : 'Not Allowed', positive: firm.weekendHolding },
+
+              { label: 'Instruments', value: firm.instruments.join(', ') },
+              { label: 'Evaluation Steps', value: firm.steps === 0 ? 'Instant — No Evaluation' : `${firm.steps}-Step Evaluation` },
+              { label: 'Activation Fee', value: account?.activationFee ?? 'None' },
+              { label: 'Min Trading Days', value: account?.minimumTradingDays ?? 'None' },
+              { label: 'Consistency', value: account?.consistencyRule ?? 'None' },
+              { label: 'Max Contracts', value: account?.maxContracts ?? 'Unlimited' },
+              { label: 'Scaling', value: account?.scalingAvailable ? 'Available' : 'Not Available', positive: account?.scalingAvailable },
+            ].map(({ label, value, positive }) => (
+              <div key={label} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '16px 20px',
+                background: '#0d1117',
+                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px',
+              }}>
+                <span style={{ color: '#94a3b8', fontSize: '14px' }}>{label}</span>
+                <span style={{
+                  fontWeight: 600, fontSize: '14px',
+                  color: positive === true ? '#00ff88' : positive === false ? '#94a3b8' : '#f1f5f9',
+                }}>{value}</span>
+              </div>
+            ))}
+
+            {/* News Trading — plain text note */}
+            <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               padding: '16px 20px',
               background: '#0d1117',
               border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px',
             }}>
-              <span style={{ color: '#94a3b8', fontSize: '14px' }}>{label}</span>
-              <span style={{
-                fontWeight: 600, fontSize: '14px',
-                color: positive === true ? '#00ff88' : positive === false ? '#94a3b8' : '#f1f5f9',
-              }}>{value}</span>
+              <span style={{ color: '#94a3b8', fontSize: '14px' }}>News Trading</span>
+              <span style={{ fontWeight: 600, fontSize: '14px', color: '#f1f5f9' }}>
+                {firm.newsTradingPolicy ?? 'Check firm website'}
+              </span>
             </div>
-          ))}
+          </div>
         </div>
       )}
 

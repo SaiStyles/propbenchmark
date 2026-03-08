@@ -15,6 +15,8 @@ export type DbFirm = {
   discount_code: string | null
   discount_percent: number | null
   description: string | null
+  weekend_holding: boolean | null
+  news_trading_policy: string | null
   created_at: string
   updated_at: string
 }
@@ -32,9 +34,7 @@ export type DbAccountModel = {
   profit_split: number | null
   evaluation_steps: number | null
   minimum_trading_days: number | null
-  consistency_rule: boolean
-  weekend_holding: boolean
-  news_trading: boolean
+  consistency_rule: number | null
   max_contracts: string | null
   first_payout_days: number | null
   payout_frequency: string | null
@@ -62,6 +62,11 @@ export type AccountModel = {
   maxDrawdown: string
   dailyDrawdown: string
   programName?: string
+  activationFee: string
+  minimumTradingDays: string
+  consistencyRule: string
+  maxContracts: string
+  scalingAvailable: boolean
 }
 
 /**
@@ -103,9 +108,9 @@ export type FirmDetailData = {
   steps: number
   payoutFreq: string
   minPayout: string
-  countries: string
   instantFunding: boolean
   weekendHolding: boolean
+  newsTradingPolicy: string | null
   platforms: string[]
   instruments: string[]
   description: string

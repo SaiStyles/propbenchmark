@@ -295,44 +295,46 @@ export default function FirmDetail({ dbFirm }: Props) {
             marginBottom: '12px', fontWeight: 600,
             textTransform: 'uppercase', letterSpacing: '1px',
           }}>Rules</div>
-          <div style={{ display: 'grid', gap: '8px' }}>
-            {[
-              { label: 'Weekend Holding', value: firm.weekendHolding ? 'Allowed' : 'Not Allowed', positive: firm.weekendHolding },
-
-              { label: 'Instruments', value: firm.instruments.join(', ') },
-              { label: 'Evaluation Steps', value: firm.steps === 0 ? 'Instant — No Evaluation' : `${firm.steps}-Step Evaluation` },
-              { label: 'Activation Fee', value: account?.activationFee ?? 'None' },
-              { label: 'Min Trading Days', value: account?.minimumTradingDays ?? 'None' },
-              { label: 'Consistency', value: account?.consistencyRule ?? 'None' },
-              { label: 'Max Contracts', value: account?.maxContracts ?? 'Unlimited' },
-              { label: 'Scaling', value: account?.scalingAvailable ? 'Available' : 'Not Available', positive: account?.scalingAvailable },
-            ].map(({ label, value, positive }) => (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: '10px',
+          }}>
+            {([
+              { label: 'Min Trading Days', value: account.minimumTradingDays, color: '#f1f5f9' },
+              { label: 'Activation Fee', value: account.activationFee, color: '#f1f5f9' },
+              { label: 'Max Contracts', value: account.maxContracts, color: '#f1f5f9' },
+              { label: 'Consistency', value: account.consistencyRule, color: '#f1f5f9' },
+              {
+                label: 'Scaling',
+                value: account.scalingAvailable ? 'Available' : 'Not Available',
+                color: '#f1f5f9',
+              },
+              {
+                label: 'Weekend Holding',
+                value: firm.weekendHolding ? 'Allowed' : 'Not Allowed',
+                color: '#f1f5f9',
+              },
+              {
+                label: 'News Trading',
+                value: firm.newsTradingPolicy ?? 'Check firm website',
+                color: '#f1f5f9',
+              },
+            ] as Array<{ label: string; value: string; color: string }>).map(({ label, value, color }) => (
               <div key={label} style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '16px 20px',
-                background: '#0d1117',
-                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px',
+                background: '#0d1829',
+                border: '1px solid #1e293b',
+                borderRadius: '12px',
+                padding: '16px',
               }}>
-                <span style={{ color: '#94a3b8', fontSize: '14px' }}>{label}</span>
-                <span style={{
-                  fontWeight: 600, fontSize: '14px',
-                  color: positive === true ? '#00ff88' : positive === false ? '#94a3b8' : '#f1f5f9',
-                }}>{value}</span>
+                <div style={{
+                  fontSize: '11px', color: '#64748b',
+                  marginBottom: '8px', textTransform: 'uppercase',
+                  letterSpacing: '0.5px', fontWeight: 600,
+                }}>{label}</div>
+                <div style={{ fontSize: '18px', fontWeight: 700, color }}>{value}</div>
               </div>
             ))}
-
-            {/* News Trading — plain text note */}
-            <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '16px 20px',
-              background: '#0d1117',
-              border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px',
-            }}>
-              <span style={{ color: '#94a3b8', fontSize: '14px' }}>News Trading</span>
-              <span style={{ fontWeight: 600, fontSize: '14px', color: '#f1f5f9' }}>
-                {firm.newsTradingPolicy ?? 'Check firm website'}
-              </span>
-            </div>
           </div>
         </div>
       )}

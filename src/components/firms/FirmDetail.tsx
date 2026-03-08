@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
+import FirmLogo from '@/components/ui/FirmLogo'
 import ProfitSplitArc from '@/components/ui/ProfitSplitArc'
 import DrawdownBar from '@/components/ui/DrawdownBar'
 import type { FirmDetailData } from '@/lib/types'
@@ -62,9 +63,8 @@ export default function FirmDetail({ dbFirm }: Props) {
           background: 'rgba(255,255,255,0.06)',
           borderRadius: '16px', display: 'flex', alignItems: 'center',
           justifyContent: 'center', fontWeight: 900, fontSize: '22px',
-          color: '#94a3b8',
-          flexShrink: 0,
-        }}>{firm.logo}</div>
+          color: '#94a3b8', flexShrink: 0, overflow: 'hidden',
+        }}><FirmLogo logo={firm.logo} name={firm.name} size={72} /></div>
 
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>

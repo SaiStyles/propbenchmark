@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
+import FirmLogo from '@/components/ui/FirmLogo'
 import type { Firm } from '@/lib/types'
 
 const EDITORIAL_TAGS = new Set(["EDITOR'S CHOICE", 'TOP RATED', 'FUTURES #1', 'BEST VALUE'])
@@ -72,8 +73,8 @@ export default function TopFirmsSection({ firms: propFirms }: Props) {
                     background: 'rgba(255,255,255,0.06)',
                     borderRadius: '10px', display: 'flex', alignItems: 'center',
                     justifyContent: 'center', fontWeight: 900, fontSize: '14px',
-                    color: '#94a3b8',
-                  }}>{firm.logo}</div>
+                    color: '#94a3b8', overflow: 'hidden',
+                  }}><FirmLogo logo={firm.logo} name={firm.name} size={48} /></div>
                   <div>
                     <div style={{
                       fontWeight: 700, fontSize: '16px', color: '#f1f5f9',

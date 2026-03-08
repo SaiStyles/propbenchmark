@@ -2,6 +2,7 @@
 
 import { Firm } from '@/components/firms/FirmCard'
 import StarRating from '@/components/ui/StarRating'
+import FirmLogo from '@/components/ui/FirmLogo'
 
 type Props = {
   firms: Firm[]
@@ -63,9 +64,8 @@ export default function CompareSelector({ firms, selected, onToggle }: Props) {
                 background: 'rgba(255,255,255,0.06)',
                 borderRadius: '6px', display: 'flex', alignItems: 'center',
                 justifyContent: 'center', fontWeight: 900, fontSize: '10px',
-                color: '#94a3b8',
-                flexShrink: 0,
-              }}>{firm.logo}</div>
+                color: '#94a3b8', flexShrink: 0, overflow: 'hidden',
+              }}><FirmLogo logo={firm.logo} name={firm.name} size={28} /></div>
               <div style={{ textAlign: 'left' }}>
                 <div style={{
                   fontSize: '13px', fontWeight: 600,

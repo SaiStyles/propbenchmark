@@ -8,13 +8,14 @@ export type DbFirm = {
   website: string | null
   category: string | null
   platforms: string[] | null
-  instruments: string[] | null
+
   editor_rating: number | null
   status: 'active' | 'warning' | 'closed'
   affiliate_link: string | null
   discount_code: string | null
   discount_percent: number | null
   description: string | null
+  is_verified: boolean | null
   weekend_holding: boolean | null
   news_trading_policy: string | null
   created_at: string
@@ -112,7 +113,7 @@ export type FirmDetailData = {
   weekendHolding: boolean
   newsTradingPolicy: string | null
   platforms: string[]
-  instruments: string[]
+
   description: string
   pros: string[]
   cons: string[]

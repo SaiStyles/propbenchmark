@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import StarRating from '@/components/ui/StarRating'
+import FirmLogo from '@/components/ui/FirmLogo'
 
 export type RankedFirm = {
   id: string | number
@@ -131,9 +132,9 @@ export default function RankingList({ ranking }: Props) {
                   borderRadius: '10px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontWeight: 900, fontSize: '13px', color: '#94a3b8',
-                  flexShrink: 0,
+                  flexShrink: 0, overflow: 'hidden',
                 }}>
-                  {firm.logo}
+                  <FirmLogo logo={firm.logo} name={firm.name} size={42} />
                 </div>
 
                 {/* Firm info */}

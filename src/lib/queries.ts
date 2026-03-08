@@ -64,7 +64,7 @@ function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
     category: firm.category ?? 'forex',
     slug: firm.slug,
     featured,
-    verified: reviewCount > 0,
+    verified: firm.is_verified ?? false,
     paysWithin: entry?.first_payout_days ? `Pays in ${entry.first_payout_days} days` : undefined,
   }
 }
@@ -92,7 +92,7 @@ export async function getFirms(): Promise<Firm[]> {
         .from('firms')
         .select(`
           id, name, slug, logo_url, category, editor_rating, discount_percent,
-          weekend_holding, news_trading_policy,
+          weekend_holding, news_trading_policy, is_verified,
           account_models (
             account_size, challenge_fee, profit_split, max_drawdown,
             evaluation_steps, first_payout_days
@@ -127,7 +127,7 @@ export async function getFeaturedFirms(): Promise<Firm[]> {
         position,
         firms (
           id, name, slug, logo_url, category, editor_rating, discount_percent, status,
-          weekend_holding, news_trading_policy,
+          weekend_holding, news_trading_policy, is_verified,
           account_models (
             account_size, challenge_fee, profit_split, max_drawdown,
             evaluation_steps, first_payout_days
@@ -192,7 +192,7 @@ export async function getFirmBySlug(slug: string): Promise<FirmDetailData | null
       weekendHolding: data.weekend_holding ?? false,
       newsTradingPolicy: data.news_trading_policy ?? null,
       platforms: data.platforms ?? [],
-      instruments: data.instruments ?? [],
+
       description: data.description ?? '',
       pros,
       cons,
@@ -268,7 +268,7 @@ export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
           category, position,
           firms (
             id, name, slug, logo_url, category, editor_rating, discount_percent, status,
-            weekend_holding, news_trading_policy,
+            weekend_holding, news_trading_policy, is_verified,
             account_models (
               account_size, challenge_fee, profit_split, max_drawdown,
               evaluation_steps, first_payout_days
@@ -437,7 +437,7 @@ export async function getTopProfitSplit(): Promise<Firm[]> {
         .from('firms')
         .select(`
           id, name, slug, logo_url, category, editor_rating, discount_percent,
-          weekend_holding, news_trading_policy,
+          weekend_holding, news_trading_policy, is_verified,
           account_models (
             account_size, challenge_fee, profit_split, max_drawdown,
             evaluation_steps, first_payout_days

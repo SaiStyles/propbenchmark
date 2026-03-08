@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Firm } from '@/components/firms/FirmCard'
+import FirmLogo from '@/components/ui/FirmLogo'
 
 type Props = {
   firms: Firm[]
@@ -117,8 +118,8 @@ export default function CompareTable({ firms, onRemove }: Props) {
                   background: 'rgba(255,255,255,0.08)',
                   borderRadius: '9px', display: 'flex', alignItems: 'center',
                   justifyContent: 'center', fontWeight: 900, fontSize: '12px', color: '#94a3b8',
-                  flexShrink: 0,
-                }}>{firm.logo}</div>
+                  flexShrink: 0, overflow: 'hidden',
+                }}><FirmLogo logo={firm.logo} name={firm.name} size={40} /></div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '14px', color: '#f1f5f9', marginBottom: '4px' }}>{firm.name}</div>
                   <span style={{

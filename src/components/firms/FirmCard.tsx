@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { BadgeCheck, Users, Clock } from 'lucide-react'
 import StarRating from '@/components/ui/StarRating'
+import FirmLogo from '@/components/ui/FirmLogo'
 import type { Firm } from '@/lib/types'
 
 export type { Firm } from '@/lib/types'
@@ -75,9 +76,8 @@ export default function FirmCard({ firm, index }: Props) {
             background: 'rgba(255,255,255,0.06)',
             borderRadius: '10px', display: 'flex', alignItems: 'center',
             justifyContent: 'center', fontWeight: 900, fontSize: '14px',
-            color: '#94a3b8',
-            flexShrink: 0,
-          }}>{firm.logo}</div>
+            color: '#94a3b8', flexShrink: 0, overflow: 'hidden',
+          }}><FirmLogo logo={firm.logo} name={firm.name} size={48} /></div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '16px', color: '#f1f5f9', fontFamily: 'var(--font-geist-sans), Inter, sans-serif' }}>{firm.name}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>

@@ -348,7 +348,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
         : '',
       readTime: row.read_time ?? '',
       featured: row.featured ?? false,
-      statHighlight: row.stat_highlight ?? null,
+      statHighlight: row.stat_highlight ?? null, 
     }))
   } catch (err) {
     console.error('[getBlogPosts] Unexpected error:', err)

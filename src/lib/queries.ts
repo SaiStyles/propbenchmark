@@ -27,17 +27,16 @@ function mapAccounts(models: DbAccountModel[]): AccountModel[] {
     .map(m => ({
       size: fmtSize(m.account_size),
       fee: m.challenge_fee != null ? fmtFee(m.challenge_fee) : '—',
-      profitTarget: fmtPercent(m.profit_target),
-      maxDrawdown: fmtPercent(m.max_drawdown),
-      dailyDrawdown: m.daily_drawdown != null
-        ? `${fmtFee(m.daily_drawdown)} (${((m.daily_drawdown / m.account_size) * 100).toFixed(1)}%)`
-        : 'None',
+      profitTarget: m.profit_target != null ? `${m.profit_target}` : '—',
+      maxDrawdown: m.max_drawdown != null ? `${m.max_drawdown}` : '—',
+      dailyDrawdown: m.daily_drawdown != null ? `${m.daily_drawdown}` : 'None',
       programName: m.program_name,
       activationFee: m.activation_fee != null ? fmtFee(m.activation_fee) : 'None',
       minimumTradingDays: m.minimum_trading_days != null ? `${m.minimum_trading_days}` : 'None',
       consistencyRule: m.consistency_rule != null ? `${m.consistency_rule}%` : 'None',
       maxContracts: m.max_contracts ?? 'Unlimited',
       scalingAvailable: m.scaling_available,
+      drawdown_type: m.drawdown_type ?? null,
     }))
 }
 
@@ -56,7 +55,7 @@ function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
     discount: firm.discount_percent ?? 0,
     tag: '',
     profitSplit: fmtPercent(entry?.profit_split),
-    maxDrawdown: fmtPercent(entry?.max_drawdown),
+    maxDrawdown: entry?.max_drawdown != null ? `${entry.max_drawdown}` : '—',
     challengeFee: entry?.challenge_fee != null ? fmtFee(entry.challenge_fee) : '—',
     steps,
     instantFunding: steps === 0,
@@ -65,7 +64,6 @@ function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
     slug: firm.slug,
     featured,
     verified: firm.is_verified ?? false,
-    paysWithin: entry?.first_payout_days ? `Pays in ${entry.first_payout_days} days` : undefined,
   }
 }
 
@@ -95,7 +93,7 @@ export async function getFirms(): Promise<Firm[]> {
           weekend_holding, news_trading_policy, is_verified,
           account_models (
             account_size, challenge_fee, profit_split, max_drawdown,
-            evaluation_steps, first_payout_days
+            evaluation_steps
           )
         `)
         .eq('status', 'active')
@@ -130,7 +128,7 @@ export async function getFeaturedFirms(): Promise<Firm[]> {
           weekend_holding, news_trading_policy, is_verified,
           account_models (
             account_size, challenge_fee, profit_split, max_drawdown,
-            evaluation_steps, first_payout_days
+            evaluation_steps
           )
         )
       `)
@@ -187,7 +185,6 @@ export async function getFirmBySlug(slug: string): Promise<FirmDetailData | null
       profitSplit: fmtPercent(entry?.profit_split),
       steps,
       payoutFreq: entry?.payout_frequency ?? 'Monthly',
-      minPayout: entry?.minimum_payout != null ? `$${entry.minimum_payout}` : '$0',
       instantFunding: steps === 0,
       weekendHolding: data.weekend_holding ?? false,
       newsTradingPolicy: data.news_trading_policy ?? null,
@@ -271,7 +268,7 @@ export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
             weekend_holding, news_trading_policy, is_verified,
             account_models (
               account_size, challenge_fee, profit_split, max_drawdown,
-              evaluation_steps, first_payout_days
+              evaluation_steps
             )
           )
         `)
@@ -440,7 +437,7 @@ export async function getTopProfitSplit(): Promise<Firm[]> {
           weekend_holding, news_trading_policy, is_verified,
           account_models (
             account_size, challenge_fee, profit_split, max_drawdown,
-            evaluation_steps, first_payout_days
+            evaluation_steps
           )
         `)
         .eq('status', 'active'),

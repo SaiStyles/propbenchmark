@@ -37,10 +37,9 @@ export type DbAccountModel = {
   minimum_trading_days: number | null
   consistency_rule: number | null
   max_contracts: string | null
-  first_payout_days: number | null
   payout_frequency: string | null
-  minimum_payout: number | null
   scaling_available: boolean
+  drawdown_type: string | null
   created_at: string
   updated_at: string
 }
@@ -68,6 +67,7 @@ export type AccountModel = {
   consistencyRule: string
   maxContracts: string
   scalingAvailable: boolean
+  drawdown_type: string | null
 }
 
 /**
@@ -93,7 +93,6 @@ export type Firm = {
   slug: string
   featured?: boolean
   verified?: boolean
-  paysWithin?: string
 }
 
 /** Full detail data shape for /firms/[slug] — returned by getFirmBySlug() */
@@ -108,7 +107,6 @@ export type FirmDetailData = {
   profitSplit: string
   steps: number
   payoutFreq: string
-  minPayout: string
   instantFunding: boolean
   weekendHolding: boolean
   newsTradingPolicy: string | null

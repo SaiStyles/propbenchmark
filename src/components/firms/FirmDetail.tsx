@@ -218,7 +218,6 @@ export default function FirmDetail({ dbFirm }: Props) {
               { label: 'Profit Split', value: firm.profitSplit, highlight: true, isSplit: true },
               { label: 'Eval Steps', value: firm.steps === 0 ? 'Instant' : `${firm.steps}-Step` },
               { label: 'Payout Freq', value: firm.payoutFreq },
-              { label: 'Min Payout', value: firm.minPayout },
             ].map(({ label, value, highlight, isSplit, isDrawdown }) => (
               <div key={label} style={{
                 background: highlight ? 'rgba(0,255,136,0.05)' : '#0d1117',
@@ -236,9 +235,6 @@ export default function FirmDetail({ dbFirm }: Props) {
                   }}>{value}</div>
                   {isSplit && <ProfitSplitArc percent={firm.profitSplit} size={28} />}
                 </div>
-                {isDrawdown && value.endsWith('%') && (
-                  <DrawdownBar percent={parsePercent(value)} />
-                )}
               </div>
             ))}
           </div>
@@ -301,6 +297,7 @@ export default function FirmDetail({ dbFirm }: Props) {
             gap: '10px',
           }}>
             {([
+              { label: 'Drawdown Type', value: account.drawdown_type ?? 'Check firm website', color: '#f1f5f9' },
               { label: 'Min Trading Days', value: account.minimumTradingDays, color: '#f1f5f9' },
               { label: 'Activation Fee', value: account.activationFee, color: '#f1f5f9' },
               { label: 'Max Contracts', value: account.maxContracts, color: '#f1f5f9' },

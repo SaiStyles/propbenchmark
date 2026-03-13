@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { BadgeCheck, Users, Clock } from 'lucide-react'
+import { BadgeCheck, Users } from 'lucide-react'
 import StarRating from '@/components/ui/StarRating'
 import FirmLogo from '@/components/ui/FirmLogo'
 import type { Firm } from '@/lib/types'
@@ -182,12 +182,6 @@ export default function FirmCard({ firm, index }: Props) {
           <Users size={10} />
           {firm.reviews.toLocaleString()}
         </span>
-        {firm.paysWithin && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px', color: '#475569' }}>
-            <Clock size={10} />
-            {firm.paysWithin}
-          </span>
-        )}
       </div>
     </div>
   )

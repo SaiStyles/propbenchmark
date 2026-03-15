@@ -89,7 +89,7 @@ export default function FirmCard({ firm, index }: Props) {
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '18px', fontWeight: 800, color: '#00ff88', letterSpacing: '-0.5px' }}>{firm.discount}%</div>
+          <div style={{ fontSize: '18px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>{firm.discount}%</div>
           <div style={{ fontSize: '10px', color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>discount</div>
         </div>
       </div>

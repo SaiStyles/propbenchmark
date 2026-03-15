@@ -135,8 +135,8 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'challenge_fee',
         label: 'Challenge Fee',
-        render: (m, _, w) => (
-          <span style={{ color: w ? '#00ff88' : m?.challenge_fee != null ? '#f1f5f9' : '#475569', fontWeight: 700 }}>
+        render: (m) => (
+          <span style={{ color: m?.challenge_fee != null ? '#f1f5f9' : '#475569', fontWeight: 700 }}>
             {fmtFee(m?.challenge_fee ?? null)}
           </span>
         ),
@@ -145,10 +145,10 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'activation_fee',
         label: 'Activation Fee',
-        render: (m, _, w) => {
+        render: (m) => {
           const fee = m?.activation_fee ?? null
           if (fee == null) return <Badge color='#00ff88' bg='rgba(0,255,136,0.08)' border='rgba(0,255,136,0.2)'>None</Badge>
-          return <span style={{ color: w ? '#00ff88' : '#f1f5f9', fontWeight: 700 }}>{fmtFee(fee)}</span>
+          return <span style={{ color: '#f1f5f9', fontWeight: 700 }}>{fmtFee(fee)}</span>
         },
         // null treated as 0 (free = best) for comparison
         winnerFn: (models) => winnerSet(models.map(m => m?.activation_fee ?? 0), 'lowest'),
@@ -156,11 +156,11 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'total_cost',
         label: 'Total Entry Cost',
-        render: (m, _, w) => {
+        render: (m) => {
           if (!m) return <span style={{ color: '#2a3040' }}>—</span>
           const total = (m.challenge_fee ?? 0) + (m.activation_fee ?? 0)
           return (
-            <span style={{ color: w ? '#00ff88' : '#f1f5f9', fontWeight: 800 }}>
+            <span style={{ color: '#f1f5f9', fontWeight: 800 }}>
               ${total.toLocaleString('en-US')}
             </span>
           )
@@ -179,14 +179,14 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'drawdown_type',
         label: 'Drawdown Type',
-        render: (m, _, w) => {
+        render: (m) => {
           const dt = m?.drawdown_type ?? null
           if (!dt) return <span style={{ color: '#475569' }}>—</span>
           const isEOD = dt === 'EOD Trailing'
           const isIntra = dt === 'Intraday Trailing'
           return (
             <Badge
-              color={w ? '#00ff88' : isEOD ? '#22d3ee' : isIntra ? '#f59e0b' : '#94a3b8'}
+              color={isEOD ? '#22d3ee' : isIntra ? '#f59e0b' : '#94a3b8'}
               bg={isEOD ? '#0e2030' : isIntra ? 'rgba(245,158,11,0.08)' : 'rgba(255,255,255,0.04)'}
               border={isEOD ? 'rgba(34,211,238,0.2)' : isIntra ? 'rgba(245,158,11,0.25)' : 'rgba(255,255,255,0.08)'}
             >
@@ -202,10 +202,10 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'max_drawdown',
         label: 'Max Drawdown',
-        render: (m, _, w) => {
+        render: (m) => {
           const dd = m?.max_drawdown ?? null
           if (dd == null) return <span style={{ color: '#475569' }}>—</span>
-          return <span style={{ color: w ? '#00ff88' : '#f59e0b', fontWeight: 700 }}>{dd}%</span>
+          return <span style={{ color: '#f59e0b', fontWeight: 700 }}>{dd}%</span>
         },
         winnerFn: (models) => winnerSet(models.map(m => m?.max_drawdown ?? null), 'highest'),
       },
@@ -213,10 +213,10 @@ const ROW_GROUPS: RowGroup[] = [
         id: 'daily_drawdown',
         label: 'Daily Loss Limit',
         isRuleBased: true,
-        render: (m, _, w) => {
+        render: (m) => {
           const dll = m?.daily_drawdown ?? null
           if (dll == null) return <Badge color='#00ff88' bg='rgba(0,255,136,0.08)' border='rgba(0,255,136,0.2)'>None</Badge>
-          return <span style={{ color: w ? '#00ff88' : '#f59e0b', fontWeight: 700 }}>${dll.toLocaleString('en-US')}</span>
+          return <span style={{ color: '#f59e0b', fontWeight: 700 }}>${dll.toLocaleString('en-US')}</span>
         },
         winnerFn: (models) => {
           // null wins; among non-null, highest $ wins (more headroom)
@@ -229,10 +229,10 @@ const ROW_GROUPS: RowGroup[] = [
         id: 'consistency_rule',
         label: 'Consistency Rule on Eval',
         isRuleBased: true,
-        render: (m, _, w) => {
+        render: (m) => {
           if (!m) return <span style={{ color: '#2a3040' }}>—</span>
           const cr = m.consistency_rule
-          if (!cr) return <Badge color={w ? '#00ff88' : '#94a3b8'}>None</Badge>
+          if (!cr) return <Badge color='#00ff88' bg='rgba(0,255,136,0.08)' border='rgba(0,255,136,0.2)'>None</Badge>
           return <Badge color='#f59e0b' bg='rgba(245,158,11,0.08)' border='rgba(245,158,11,0.25)'>Yes</Badge>
         },
         winnerFn: (models) => {
@@ -243,10 +243,10 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'min_trading_days',
         label: 'Min Trading Days to Pass',
-        render: (m, _, w) => {
+        render: (m) => {
           const days = m?.minimum_trading_days ?? null
           if (days == null) return <span style={{ color: '#475569' }}>—</span>
-          return <span style={{ color: w ? '#00ff88' : '#f1f5f9' }}>{days} days</span>
+          return <span style={{ color: '#f1f5f9' }}>{days} days</span>
         },
         winnerFn: (models) => winnerSet(models.map(m => m?.minimum_trading_days ?? null), 'lowest'),
       },
@@ -271,11 +271,11 @@ const ROW_GROUPS: RowGroup[] = [
         id: 'funded_consistency',
         label: 'Funded Consistency',
         isRuleBased: true,
-        render: (m, _, w) => {
+        render: (m) => {
           if (!m) return <span style={{ color: '#2a3040' }}>—</span>
           const fc = m.funded_consistency ?? null
-          if (fc == null) return <Badge color={w ? '#00ff88' : '#94a3b8'}>None</Badge>
-          return <span style={{ color: w ? '#00ff88' : '#f59e0b' }}>{fc}%</span>
+          if (fc == null) return <Badge color='#00ff88' bg='rgba(0,255,136,0.08)' border='rgba(0,255,136,0.2)'>None</Badge>
+          return <span style={{ color: '#f59e0b' }}>{fc}%</span>
         },
         winnerFn: (models) => {
           const nullIdx = models.map((m, i) => (m?.funded_consistency == null ? i : -1)).filter(i => i >= 0)
@@ -290,7 +290,7 @@ const ROW_GROUPS: RowGroup[] = [
           const pf = m?.payout_frequency ?? null
           if (!pf) return <span style={{ color: '#475569' }}>—</span>
           return (
-            <Badge color={w ? '#00ff88' : '#94a3b8'} bg={w ? 'rgba(0,255,136,0.06)' : 'rgba(255,255,255,0.04)'} border={w ? 'rgba(0,255,136,0.2)' : 'rgba(255,255,255,0.08)'}>
+            <Badge color='#e2e8f0' bg={w ? 'rgba(0,255,136,0.06)' : 'rgba(255,255,255,0.04)'} border={w ? 'rgba(0,255,136,0.2)' : 'rgba(255,255,255,0.08)'}>
               {fmtPayoutFreq(pf)}
             </Badge>
           )
@@ -329,18 +329,18 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'years_in_operation',
         label: 'Years in Operation',
-        render: (_, f, w) => {
+        render: (_, f) => {
           const y = f?.years_in_operation ?? null
-          return <span style={{ color: w ? '#00ff88' : y != null ? '#f1f5f9' : '#475569' }}>{y != null ? `${y} yrs` : '—'}</span>
+          return <span style={{ color: y != null ? '#f1f5f9' : '#475569' }}>{y != null ? `${y} yrs` : '—'}</span>
         },
         winnerFn: (_, firms) => winnerSet(firms.map(f => f?.years_in_operation ?? null), 'highest'),
       },
       {
         id: 'max_allocation',
         label: 'Max Allocation',
-        render: (_, f, w) => {
+        render: (_, f) => {
           const ma = f?.max_allocation ?? null
-          return <span style={{ color: w ? '#00ff88' : ma != null ? '#f1f5f9' : '#475569', fontWeight: 700 }}>{fmtAllocation(ma)}</span>
+          return <span style={{ color: ma != null ? '#f1f5f9' : '#475569', fontWeight: 700 }}>{fmtAllocation(ma)}</span>
         },
         winnerFn: (_, firms) => winnerSet(firms.map(f => f?.max_allocation ?? null), 'highest'),
       },
@@ -353,7 +353,7 @@ const ROW_GROUPS: RowGroup[] = [
           return (
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <StarRating rating={ts} size={12} />
-              <span style={{ color: w ? '#00ff88' : '#f1f5f9', fontWeight: 700, fontSize: '13px' }}>{ts}</span>
+              <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '13px' }}>{ts}</span>
             </div>
           )
         },
@@ -368,7 +368,7 @@ const ROW_GROUPS: RowGroup[] = [
           return (
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <StarRating rating={er} size={12} />
-              <span style={{ color: w ? '#00ff88' : '#f1f5f9', fontWeight: 700, fontSize: '13px' }}>{er}</span>
+              <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '13px' }}>{er}</span>
             </div>
           )
         },
@@ -496,14 +496,14 @@ export default function CompareTable({
   return (
     <div style={{
       background: '#0d1117',
-      border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: '16px',
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderRadius: '18px',
       overflow: 'hidden',
     }}>
       {/* ── STICKY HEADER (outside scroll container for top-stickiness) ── */}
       <div style={{
         position: 'sticky',
-        top: '64px',
+        top: '80px',
         zIndex: 20,
         overflow: 'hidden',
         background: '#0d1117',

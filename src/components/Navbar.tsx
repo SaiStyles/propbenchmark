@@ -24,52 +24,23 @@ export default function Navbar() {
       justifyContent: 'space-between',
       gap: '16px',
     }}>
-      {/* Logo */}
-      <Link
-        href="/"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          textDecoration: 'none',
-          flexShrink: 0,
-        }}
-      >
+      {/* Logo (reverted to original P mark) */}
+      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flexShrink: 0 }}>
         <div style={{
-          width: '34px',
-          height: '34px',
-          background: 'radial-gradient(circle at 30% 0%, #bfffe0, #00ff88)',
-          borderRadius: '10px',
+          width: '36px',
+          height: '36px',
+          background: 'linear-gradient(135deg, #00ff88, #00cc6a)',
+          borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontWeight: 900,
           fontSize: '16px',
           color: '#060b14',
-          boxShadow: '0 0 0 1px rgba(15,23,42,0.6), 0 12px 30px rgba(0,0,0,0.75)',
         }}>P</div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span
-            style={{
-              fontSize: '18px',
-              fontWeight: 700,
-              letterSpacing: '-0.5px',
-              color: '#f1f5f9',
-            }}
-          >
-            PropBenchmark
-          </span>
-          <span
-            style={{
-              fontSize: '11px',
-              color: '#64748b',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Prop firm intelligence
-          </span>
-        </div>
+        <span style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.5px', color: '#f1f5f9' }}>
+          PropBenchmark
+        </span>
       </Link>
 
       {/* Desktop Links */}

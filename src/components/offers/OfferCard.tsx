@@ -30,25 +30,27 @@ export default function OfferCard({ offer, index }: Props) {
       className={`anim-fade-up ${offer.featured ? 'featured-card-border' : ''}`}
       style={{
         background: '#0d1117',
-        border: offer.featured ? '1px solid transparent' : `1px solid rgba(255,255,255,0.07)`,
-        borderRadius: '16px',
+        border: offer.featured ? '1px solid transparent' : `1px solid rgba(255,255,255,0.08)`,
+        borderRadius: '18px',
         overflow: 'hidden',
-        transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s',
+        transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s',
         position: 'relative',
         boxShadow: offer.featured ? '0 0 30px rgba(0,255,136,0.08)' : undefined,
         animationDelay: `${(index ?? 0) * 60}ms`,
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = offer.featured ? 'transparent' : 'rgba(255,255,255,0.12)'
+        e.currentTarget.style.borderColor = offer.featured ? 'transparent' : 'rgba(255,255,255,0.16)'
         e.currentTarget.style.background = '#111827'
         e.currentTarget.style.boxShadow = offer.featured
           ? '0 0 40px rgba(0,255,136,0.12)'
-          : '0 8px 32px rgba(0,0,0,0.35)'
+          : '0 18px 55px rgba(0,0,0,0.85)'
+        e.currentTarget.style.transform = 'translateY(-2px)'
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.borderColor = offer.featured ? 'transparent' : 'rgba(255,255,255,0.07)'
+        e.currentTarget.style.borderColor = offer.featured ? 'transparent' : 'rgba(255,255,255,0.08)'
         e.currentTarget.style.background = '#0d1117'
         e.currentTarget.style.boxShadow = offer.featured ? '0 0 30px rgba(0,255,136,0.08)' : 'none'
+        e.currentTarget.style.transform = 'translateY(0)'
       }}
     >
       {/* Featured top accent */}
@@ -59,7 +61,7 @@ export default function OfferCard({ offer, index }: Props) {
         }} />
       )}
 
-      <div style={{ padding: '24px' }}>
+      <div style={{ padding: '22px 20px 18px' }}>
         {/* Firm row */}
         <div style={{
           display: 'flex', justifyContent: 'space-between',
@@ -68,8 +70,8 @@ export default function OfferCard({ offer, index }: Props) {
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div style={{
               width: '44px', height: '44px',
-              background: 'rgba(255,255,255,0.06)',
-              borderRadius: '10px',
+              background: 'rgba(15,23,42,0.9)',
+              borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 900, fontSize: '13px', color: '#94a3b8',
               flexShrink: 0,
@@ -92,7 +94,7 @@ export default function OfferCard({ offer, index }: Props) {
             <span style={{
               background: isHighlightTag ? 'rgba(245,158,11,0.08)' : 'rgba(255,255,255,0.04)',
               border: isHighlightTag ? '1px solid rgba(245,158,11,0.25)' : '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '4px', padding: '2px 8px',
+              borderRadius: '999px', padding: '2px 9px',
               fontSize: '10px', fontWeight: 700,
               color: isHighlightTag ? '#f59e0b' : '#94a3b8',
               letterSpacing: '1px',
@@ -103,7 +105,7 @@ export default function OfferCard({ offer, index }: Props) {
               fontSize: '10px', color: '#475569',
               background: 'rgba(255,255,255,0.03)',
               border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: '4px', padding: '2px 8px',
+              borderRadius: '999px', padding: '2px 8px',
               textTransform: 'capitalize',
             }}>
               {offer.category}
@@ -112,10 +114,10 @@ export default function OfferCard({ offer, index }: Props) {
         </div>
 
         {/* Discount + description */}
-        <div style={{ marginBottom: '18px' }}>
+        <div style={{ marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '6px' }}>
             <span style={{
-              fontSize: '36px', fontWeight: 800,
+              fontSize: '34px', fontWeight: 800,
               color: '#f1f5f9', lineHeight: 1, letterSpacing: '-1px',
             }}>
               {offer.discount}%
@@ -135,9 +137,9 @@ export default function OfferCard({ offer, index }: Props) {
           <div style={{
             flex: 1,
             background: '#1a2a1a',
-            border: '1px solid rgba(0,255,136,0.3)',
-            borderRadius: '8px', padding: '10px 14px',
-            fontFamily: 'monospace', fontSize: '14px',
+            border: '1px solid rgba(0,255,136,0.35)',
+            borderRadius: '999px', padding: '9px 14px',
+            fontFamily: 'monospace', fontSize: '13px',
             fontWeight: 700, color: '#00ff88', letterSpacing: '2px',
           }}>
             {offer.code}
@@ -145,7 +147,7 @@ export default function OfferCard({ offer, index }: Props) {
           <button
             onClick={handleCopy}
             style={{
-              padding: '10px 16px', borderRadius: '8px',
+              padding: '9px 14px', borderRadius: '999px',
               border: copied ? '1px solid rgba(0,255,136,0.4)' : '1px solid rgba(255,255,255,0.08)',
               background: copied ? 'rgba(0,255,136,0.08)' : 'rgba(255,255,255,0.03)',
               color: copied ? '#00ff88' : '#475569',
@@ -162,7 +164,7 @@ export default function OfferCard({ offer, index }: Props) {
         {/* Savings + expiry */}
         <div style={{
           display: 'flex', justifyContent: 'space-between',
-          alignItems: 'center', marginBottom: '18px',
+          alignItems: 'center', marginBottom: '16px',
         }}>
           <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 600 }}>
             {offer.savings}
@@ -183,23 +185,30 @@ export default function OfferCard({ offer, index }: Props) {
             rel="noopener noreferrer"
             style={{
               flex: 1, display: 'block', textAlign: 'center',
-              padding: '11px', background: '#00ff88',
-              color: '#060b14', borderRadius: '8px',
-              fontWeight: 700, fontSize: '14px', textDecoration: 'none',
-              transition: 'transform 0.15s',
+              padding: '10px 12px', background: '#00ff88',
+              color: '#060b14', borderRadius: '999px',
+              fontWeight: 700, fontSize: '13px', textDecoration: 'none',
+              transition: 'transform 0.15s, box-shadow 0.15s',
+              boxShadow: '0 10px 35px rgba(0,255,136,0.28)',
             }}
-            onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.02)')}
-            onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'translateY(-1px)'
+              e.currentTarget.style.boxShadow = '0 12px 42px rgba(0,255,136,0.33)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 10px 35px rgba(0,255,136,0.28)'
+            }}
           >
             Claim Deal →
           </a>
           <Link
             href={`/firms/${offer.firmSlug}`}
             style={{
-              padding: '11px 16px',
+              padding: '10px 14px',
               border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '8px', color: '#94a3b8',
-              fontSize: '13px', fontWeight: 600,
+              borderRadius: '999px', color: '#94a3b8',
+              fontSize: '12px', fontWeight: 600,
               textDecoration: 'none', whiteSpace: 'nowrap',
               transition: 'all 0.15s',
             }}

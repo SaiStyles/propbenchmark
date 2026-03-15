@@ -126,16 +126,16 @@ export default function CompareView({ firms }: Props) {
   const selectedSlugs = selections.map(s => s.slug)
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '48px 24px 96px' }}>
-      <div style={{ marginBottom: '32px' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 0 80px' }}>
+      <div style={{ marginBottom: '24px' }}>
         <h1 style={{
-          fontSize: '28px', fontWeight: 700, color: '#f1f5f9', marginBottom: '8px',
+          fontSize: '26px', fontWeight: 700, color: '#f1f5f9', marginBottom: '6px',
           fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
         }}>
-          Compare Prop Firms
+          Compare prop firms
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '14px' }}>
-          Select up to 3 firms, choose a program and account size, then compare side by side.
+        <p style={{ color: '#94a3b8', fontSize: '13px', maxWidth: '620px' }}>
+          Pick up to 3 firms, lock in the same account size, then inspect cost, survival rules, payout terms and trust side by side.
         </p>
       </div>
 

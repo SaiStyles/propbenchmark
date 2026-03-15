@@ -16,8 +16,8 @@ export default function CompareSelector({ firms, selectedSlugs, onAdd, onRemove 
   if (firms.length === 0) {
     return (
       <div style={{
-        background: '#0d1117', border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: '12px', padding: '40px 20px', marginBottom: '24px',
+        background: '#0d1117', border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '14px', padding: '32px 20px', marginBottom: '20px',
         textAlign: 'center', color: '#475569', fontSize: '14px',
       }}>
         No firms available to compare in this market type.
@@ -27,11 +27,11 @@ export default function CompareSelector({ firms, selectedSlugs, onAdd, onRemove 
 
   return (
     <div style={{
-      background: '#0d1117',
-      border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: '12px',
-      padding: '20px',
-      marginBottom: '24px',
+      background: 'radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.95))',
+      border: '1px solid rgba(30,64,175,0.65)',
+      borderRadius: '14px',
+      padding: '16px 18px',
+      marginBottom: '20px',
     }}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',

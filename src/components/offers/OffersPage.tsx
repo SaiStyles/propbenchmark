@@ -37,24 +37,24 @@ export default function OffersPage({ initialOffers }: Props) {
     : 0
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 96px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 0 80px' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: '44px' }}>
+      <div style={{ marginBottom: '32px' }}>
         <h1 style={{
           fontSize: 'clamp(26px, 4vw, 38px)',
           fontWeight: 700, color: '#f1f5f9',
-          marginBottom: '10px', letterSpacing: '-0.5px', lineHeight: 1.1,
+          marginBottom: '8px', letterSpacing: '-0.5px', lineHeight: 1.1,
           fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
         }}>
           Exclusive Discount Codes
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '28px' }}>
-          Verified deals negotiated for PropBenchmark readers. Avg {avgDiscount}% off.
+        <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '20px', maxWidth: '640px' }}>
+          Verified deals negotiated for PropBenchmark readers — we track live prop offers so you can maximise discount without sacrificing risk rules.
         </p>
 
         {/* Stats row */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {[
             { label: 'Active Deals', value: ALL_OFFERS.length },
             { label: 'Avg Discount', value: `${avgDiscount}%` },
@@ -63,14 +63,14 @@ export default function OffersPage({ initialOffers }: Props) {
           ].map(stat => (
             <div key={stat.label} style={{
               background: '#0d1117',
-              border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: '10px', padding: '14px 20px',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '12px', padding: '12px 16px',
             }}>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>
                 {stat.value}
               </div>
               <div style={{
-                fontSize: '11px', color: '#475569',
+                fontSize: '10px', color: '#475569',
                 marginTop: '3px', textTransform: 'uppercase', letterSpacing: '0.5px',
               }}>{stat.label}</div>
             </div>
@@ -81,17 +81,17 @@ export default function OffersPage({ initialOffers }: Props) {
       {/* Filter bar */}
       <div style={{
         display: 'flex', gap: '10px', alignItems: 'center',
-        marginBottom: '36px', flexWrap: 'wrap',
+        marginBottom: '28px', flexWrap: 'wrap',
       }}>
         {/* Sort */}
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value)}
           style={{
-            background: '#0d1117',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: '10px', padding: '10px 14px',
-            color: '#94a3b8', fontSize: '13px',
+            background: '#020617',
+            border: '1px solid rgba(148,163,184,0.55)',
+            borderRadius: '999px', padding: '9px 16px',
+            color: '#e2e8f0', fontSize: '13px',
             fontWeight: 500, outline: 'none', cursor: 'pointer',
           }}
         >
@@ -107,7 +107,7 @@ export default function OffersPage({ initialOffers }: Props) {
 
       {/* Featured deals */}
       {featured.length > 0 && (
-        <div style={{ marginBottom: '44px' }}>
+        <div style={{ marginBottom: '40px' }}>
           <div style={{
             fontSize: '11px', fontWeight: 600, color: '#475569',
             letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '16px',

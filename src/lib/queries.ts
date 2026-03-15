@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import type { Firm, FirmDetailData, OfferData, AccountModel, DbAccountModel } from '@/lib/types'
+import type { Firm, FirmDetailData, OfferData, AccountModel, DbAccountModel, CompareFirm } from '@/lib/types'
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
@@ -300,6 +300,34 @@ export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
     return result
   } catch {
     return {}
+  }
+}
+
+/** All active firms with full account_models for the compare page. Returns [] on any error. */
+export async function getCompareData(): Promise<CompareFirm[]> {
+  try {
+    const supabase = await createServerSupabaseClient()
+
+    const { data, error } = await supabase
+      .from('firms')
+      .select(`
+        id, name, slug, logo_url, category, editor_rating, is_verified,
+        country, years_in_operation, max_allocation, trustpilot_score,
+        platforms, discount_code, affiliate_link, discount_percent,
+        account_models (
+          id, firm_id, program_name, account_size, challenge_fee, activation_fee,
+          profit_target, max_drawdown, daily_drawdown, profit_split,
+          evaluation_steps, minimum_trading_days, consistency_rule,
+          payout_frequency, scaling_available, drawdown_type, funded_consistency
+        )
+      `)
+      .eq('status', 'active')
+      .order('name', { ascending: true })
+
+    if (error || !data?.length) return []
+    return data as CompareFirm[]
+  } catch {
+    return []
   }
 }
 

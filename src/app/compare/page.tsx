@@ -1,12 +1,17 @@
+import { Suspense } from 'react'
 import CompareView from '@/components/compare/CompareView'
-import { getFirms } from '@/lib/queries'
+import { getCompareData } from '@/lib/queries'
 
 export const metadata = {
   title: 'Compare Prop Firms | PropBenchmark',
-  description: 'Compare prop trading firms side by side. Profit splits, drawdowns, fees and more.',
+  description: 'Compare prop trading firms side by side — fees, drawdown rules, profit splits, payouts, and trust metrics.',
 }
 
 export default async function ComparePage() {
-  const firms = await getFirms()
-  return <CompareView allFirms={firms} />
+  const firms = await getCompareData()
+  return (
+    <Suspense>
+      <CompareView firms={firms} />
+    </Suspense>
+  )
 }

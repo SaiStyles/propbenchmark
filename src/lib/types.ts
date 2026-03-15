@@ -119,6 +119,49 @@ export type FirmDetailData = {
   affiliateLink?: string
 }
 
+// ─── Compare page raw types ───────────────────────────────────────────────────
+
+/** Raw firm row for the compare page — includes all compare-specific columns */
+export type CompareFirm = {
+  id: string
+  name: string
+  slug: string
+  logo_url: string | null
+  category: string | null
+  editor_rating: number | null
+  is_verified: boolean | null
+  country: string | null
+  years_in_operation: number | null
+  max_allocation: number | null
+  trustpilot_score: number | null
+  platforms: string[] | null
+  discount_code: string | null
+  affiliate_link: string | null
+  discount_percent: number | null
+  account_models: CompareAccountModel[]
+}
+
+/** Raw account model row for the compare page */
+export type CompareAccountModel = {
+  id: string
+  firm_id: string
+  program_name: string
+  account_size: number
+  challenge_fee: number | null
+  activation_fee: number | null
+  profit_target: number | null
+  max_drawdown: number | null
+  daily_drawdown: number | null
+  profit_split: number | null
+  evaluation_steps: number | null
+  minimum_trading_days: number | null
+  consistency_rule: boolean | null
+  payout_frequency: string | null
+  scaling_available: boolean | null
+  drawdown_type: string | null
+  funded_consistency: number | null
+}
+
 /** Offer card shape — id is string | number for UUID/numeric compat */
 export type OfferData = {
   id: string | number

@@ -1,17 +1,29 @@
 'use client'
 
-import { Firm } from '@/components/firms/FirmCard'
-import StarRating from '@/components/ui/StarRating'
 import FirmLogo from '@/components/ui/FirmLogo'
+import type { CompareFirm } from '@/lib/types'
 
 type Props = {
-  firms: Firm[]
-  selected: string[]
-  onToggle: (slug: string) => void
+  firms: CompareFirm[]
+  selectedSlugs: string[]
+  onAdd: (slug: string) => void
+  onRemove: (slug: string) => void
 }
 
-export default function CompareSelector({ firms, selected, onToggle }: Props) {
-  const isFull = selected.length === 3
+export default function CompareSelector({ firms, selectedSlugs, onAdd, onRemove }: Props) {
+  const isFull = selectedSlugs.length >= 3
+
+  if (firms.length === 0) {
+    return (
+      <div style={{
+        background: '#0d1117', border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: '12px', padding: '40px 20px', marginBottom: '24px',
+        textAlign: 'center', color: '#475569', fontSize: '14px',
+      }}>
+        No firms available to compare in this market type.
+      </div>
+    )
+  }
 
   return (
     <div style={{
@@ -19,15 +31,17 @@ export default function CompareSelector({ firms, selected, onToggle }: Props) {
       border: '1px solid rgba(255,255,255,0.07)',
       borderRadius: '12px',
       padding: '20px',
-      marginBottom: '28px',
+      marginBottom: '24px',
     }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        marginBottom: '16px',
+      }}>
         <span style={{
           fontSize: '11px', fontWeight: 600, color: '#475569',
           textTransform: 'uppercase', letterSpacing: '1px',
         }}>
-          Select Firms
+          Select Firms to Compare
         </span>
         <span style={{
           fontSize: '12px', fontWeight: 600,
@@ -36,56 +50,69 @@ export default function CompareSelector({ firms, selected, onToggle }: Props) {
           border: `1px solid ${isFull ? 'rgba(0,255,136,0.2)' : 'rgba(255,255,255,0.08)'}`,
           borderRadius: '20px', padding: '2px 10px',
         }}>
-          {selected.length}/3 selected
+          {selectedSlugs.length}/3 selected
         </span>
       </div>
 
-      {/* Firm chips */}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         {firms.map(firm => {
-          const isSelected = selected.includes(firm.slug)
-          const isDisabled = !isSelected && selected.length >= 3
+          const isSelected = selectedSlugs.includes(firm.slug)
+          const isDisabled = !isSelected && isFull
           return (
             <button
               key={firm.slug}
-              onClick={() => { if (!isDisabled) onToggle(firm.slug) }}
+              onClick={() => {
+                if (isDisabled) return
+                if (isSelected) onRemove(firm.slug)
+                else onAdd(firm.slug)
+              }}
               style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '9px 14px', borderRadius: '10px',
+                display: 'flex', alignItems: 'center', gap: '9px',
+                padding: '8px 13px', borderRadius: '10px',
                 cursor: isDisabled ? 'not-allowed' : 'pointer',
-                border: isSelected ? '1px solid rgba(0,255,136,0.3)' : '1px solid rgba(255,255,255,0.08)',
-                background: isSelected ? 'rgba(0,255,136,0.07)' : 'transparent',
+                border: isSelected
+                  ? '1px solid rgba(0,255,136,0.3)'
+                  : '1px solid rgba(255,255,255,0.08)',
+                background: isSelected ? 'rgba(0,255,136,0.07)' : 'rgba(255,255,255,0.02)',
                 opacity: isDisabled ? 0.4 : 1,
                 transition: 'all 0.15s',
               }}
+              onMouseEnter={e => {
+                if (!isDisabled && !isSelected) {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.14)'
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!isDisabled && !isSelected) {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
+                }
+              }}
             >
               <div style={{
-                width: '28px', height: '28px',
+                width: '26px', height: '26px',
                 background: 'rgba(255,255,255,0.06)',
-                borderRadius: '6px', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontWeight: 900, fontSize: '10px',
-                color: '#94a3b8', flexShrink: 0, overflow: 'hidden',
-              }}><FirmLogo logo={firm.logo} name={firm.name} size={28} /></div>
-              <div style={{ textAlign: 'left' }}>
-                <div style={{
-                  fontSize: '13px', fontWeight: 600,
-                  color: isSelected ? '#00ff88' : '#94a3b8',
-                }}>
-                  {firm.name}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <StarRating rating={firm.rating} size={10} />
-                  <span style={{ fontSize: '11px', color: '#475569' }}>{firm.rating}</span>
-                </div>
+                borderRadius: '6px', flexShrink: 0, overflow: 'hidden',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '10px', color: '#94a3b8',
+              }}>
+                <FirmLogo logo={firm.logo_url ?? ''} name={firm.name} size={26} />
               </div>
+              <span style={{
+                fontSize: '13px', fontWeight: 600,
+                color: isSelected ? '#00ff88' : '#94a3b8',
+              }}>
+                {firm.name}
+              </span>
               {isSelected && (
                 <div style={{
-                  marginLeft: '2px', width: '16px', height: '16px',
+                  width: '15px', height: '15px',
                   background: 'rgba(0,255,136,0.15)',
                   border: '1px solid rgba(0,255,136,0.3)',
                   borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '9px', color: '#00ff88', fontWeight: 900,
+                  fontSize: '8px', color: '#00ff88', fontWeight: 900,
                 }}>✓</div>
               )}
             </button>

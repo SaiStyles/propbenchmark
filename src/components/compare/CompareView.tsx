@@ -1,68 +1,158 @@
 'use client'
 
-import { useState } from 'react'
-import type { Firm } from '@/lib/types'
+import { useState, useCallback, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import type { CompareFirm } from '@/lib/types'
+import { useMarketType } from '@/context/MarketTypeContext'
 import CompareSelector from './CompareSelector'
 import CompareTable from './CompareTable'
-import { useMarketType } from '@/context/MarketTypeContext'
 
-type Props = { allFirms?: Firm[] }
+export type FirmSelection = {
+  slug: string
+  programName: string
+  accountSize: number
+}
 
-export default function CompareView({ allFirms }: Props) {
-  const { marketType } = useMarketType()
-  const baseFirms = allFirms ?? []
-  const ALL_FIRMS = baseFirms.filter(f =>
-    marketType === 'futures' ? f.category === 'futures' : f.category === 'forex'
-  )
-  const [selected, setSelected] = useState<string[]>([])
+type Props = {
+  firms: CompareFirm[]
+}
 
-  const toggle = (slug: string) => {
-    setSelected(prev => {
-      if (prev.includes(slug)) return prev.filter(s => s !== slug)
-      if (prev.length >= 3) return prev
-      return [...prev, slug]
+export function getPrograms(firm: CompareFirm): string[] {
+  return [...new Set(firm.account_models.map(m => m.program_name))].sort()
+}
+
+export function getSizes(firm: CompareFirm, programName: string): number[] {
+  return firm.account_models
+    .filter(m => m.program_name === programName)
+    .map(m => m.account_size)
+    .sort((a, b) => a - b)
+}
+
+function defaultSize(sizes: number[]): number {
+  return sizes.includes(50000) ? 50000 : sizes[0]
+}
+
+function serializeSelections(selections: FirmSelection[]): string {
+  return selections
+    .map(s => `${s.slug}:${encodeURIComponent(s.programName)}:${s.accountSize}`)
+    .join(',')
+}
+
+function parseSelections(param: string, firms: CompareFirm[]): FirmSelection[] {
+  return param
+    .split(',')
+    .map(part => {
+      const [slug, encodedProgram, sizeStr] = part.split(':')
+      if (!slug || !encodedProgram || !sizeStr) return null
+      const programName = decodeURIComponent(encodedProgram)
+      const accountSize = parseInt(sizeStr, 10)
+      if (isNaN(accountSize)) return null
+      const firm = firms.find(f => f.slug === slug)
+      if (!firm) return null
+      const valid = firm.account_models.find(
+        m => m.program_name === programName && m.account_size === accountSize
+      )
+      if (!valid) return null
+      return { slug, programName, accountSize }
     })
-  }
+    .filter((s): s is FirmSelection => s !== null)
+    .slice(0, 3)
+}
 
-  const selectedFirms = selected
-    .map(slug => ALL_FIRMS.find(f => f.slug === slug))
-    .filter((f): f is Firm => Boolean(f))
+export default function CompareView({ firms }: Props) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { marketType } = useMarketType()
+
+  const filteredFirms = firms.filter(f =>
+    marketType === 'futures' ? f.category === 'futures' : f.category !== 'futures'
+  )
+
+  const [selections, setSelections] = useState<FirmSelection[]>(() => {
+    const param = searchParams.get('firms')
+    if (param) return parseSelections(param, firms) // use all firms for initial parse
+    return []
+  })
+
+  // Drop selections that don't exist in the filtered set
+  useEffect(() => {
+    setSelections(prev => prev.filter(s => filteredFirms.find(f => f.slug === s.slug)))
+  }, [marketType]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync URL
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (selections.length > 0) {
+      url.searchParams.set('firms', serializeSelections(selections))
+    } else {
+      url.searchParams.delete('firms')
+    }
+    router.replace(url.pathname + url.search, { scroll: false })
+  }, [selections]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const addFirm = useCallback((slug: string) => {
+    setSelections(prev => {
+      if (prev.length >= 3) return prev
+      if (prev.find(s => s.slug === slug)) return prev
+      const firm = filteredFirms.find(f => f.slug === slug)
+      if (!firm) return prev
+      const programs = getPrograms(firm)
+      const programName = programs[0]
+      const sizes = getSizes(firm, programName)
+      const accountSize = defaultSize(sizes)
+      return [...prev, { slug, programName, accountSize }]
+    })
+  }, [filteredFirms])
+
+  const removeFirm = useCallback((slug: string) => {
+    setSelections(prev => prev.filter(s => s.slug !== slug))
+  }, [])
+
+  const changeProgram = useCallback((slug: string, programName: string) => {
+    setSelections(prev => prev.map(s => {
+      if (s.slug !== slug) return s
+      const firm = filteredFirms.find(f => f.slug === slug)
+      if (!firm) return s
+      const sizes = getSizes(firm, programName)
+      const accountSize = defaultSize(sizes)
+      return { ...s, programName, accountSize }
+    }))
+  }, [filteredFirms])
+
+  const changeSize = useCallback((slug: string, accountSize: number) => {
+    setSelections(prev => prev.map(s => s.slug === slug ? { ...s, accountSize } : s))
+  }, [])
+
+  const selectedSlugs = selections.map(s => s.slug)
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 96px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '36px' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '48px 24px 96px' }}>
+      <div style={{ marginBottom: '32px' }}>
         <h1 style={{
           fontSize: '28px', fontWeight: 700, color: '#f1f5f9', marginBottom: '8px',
           fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
         }}>
-          Compare Firms
+          Compare Prop Firms
         </h1>
         <p style={{ color: '#94a3b8', fontSize: '14px' }}>
-          Select up to 3 firms to compare side by side
+          Select up to 3 firms, choose a program and account size, then compare side by side.
         </p>
       </div>
 
-      {ALL_FIRMS.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <div style={{ fontSize: '32px', marginBottom: '16px', color: '#475569' }}>—</div>
-          <p style={{ fontSize: '15px', color: '#94a3b8' }}>
-            No {marketType === 'futures' ? 'Futures' : 'CFD / Forex'} firms available to compare.
-          </p>
-        </div>
-      ) : (
-        <>
-          <CompareSelector firms={ALL_FIRMS} selected={selected} onToggle={toggle} />
-          {selectedFirms.length >= 2 ? (
-            <CompareTable firms={selectedFirms} onRemove={toggle} />
-          ) : (
-            <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>
-              <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚖</div>
-              <p style={{ fontSize: '15px' }}>Select at least 2 firms above to start comparing</p>
-            </div>
-          )}
-        </>
-      )}
+      <CompareSelector
+        firms={filteredFirms}
+        selectedSlugs={selectedSlugs}
+        onAdd={addFirm}
+        onRemove={removeFirm}
+      />
+
+      <CompareTable
+        allFirms={filteredFirms}
+        selections={selections}
+        onRemove={removeFirm}
+        onChangeProgram={changeProgram}
+        onChangeSize={changeSize}
+      />
     </div>
   )
 }

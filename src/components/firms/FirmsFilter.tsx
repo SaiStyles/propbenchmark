@@ -15,11 +15,11 @@ type Props = {
 }
 
 const inputStyle = {
-  background: '#0d1117',
-  border: '1px solid rgba(255,255,255,0.07)',
-  borderRadius: '8px',
-  padding: '8px 12px',
-  color: '#f1f5f9',
+  background: '#020617',
+  border: '1px solid rgba(148,163,184,0.5)',
+  borderRadius: '999px',
+  padding: '8px 16px',
+  color: '#e2e8f0',
   fontSize: '13px',
   outline: 'none',
 }
@@ -31,12 +31,12 @@ export default function FirmsFilter({ filters, onChange }: Props) {
 
   return (
     <div style={{
-      background: '#0d1117',
-      border: '1px solid rgba(255,255,255,0.07)',
-      borderRadius: '12px',
-      padding: '16px 20px',
+      background: 'radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.95))',
+      border: '1px solid rgba(30,64,175,0.65)',
+      borderRadius: '14px',
+      padding: '14px 16px',
       display: 'flex',
-      gap: '10px',
+      gap: '8px',
       flexWrap: 'wrap',
       alignItems: 'center',
       marginBottom: '28px',

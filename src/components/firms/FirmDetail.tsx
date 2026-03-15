@@ -42,65 +42,76 @@ export default function FirmDetail({ dbFirm }: Props) {
   const isEditorial = EDITORIAL_TAGS.has(firm.tag)
 
   return (
-    <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 24px 96px' }}>
+    <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 0 80px' }}>
 
       {/* Back */}
       <Link href="/firms" style={{
-        color: '#475569', textDecoration: 'none',
-        fontSize: '13px', display: 'inline-block', marginBottom: '32px',
+        color: '#64748b', textDecoration: 'none',
+        fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px',
+        marginBottom: '20px',
         transition: 'color 0.15s',
       }}
         onMouseEnter={e => (e.currentTarget.style.color = '#94a3b8')}
-        onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
+        onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}
       >
-        ← All firms
+        <span style={{
+          width: '18px',
+          height: '18px',
+          borderRadius: '999px',
+          border: '1px solid rgba(148,163,184,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '10px',
+        }}>←</span>
+        All firms
       </Link>
 
       {/* Header */}
-      <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', marginBottom: '40px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap' }}>
         <div style={{
           width: '72px', height: '72px',
-          background: 'rgba(255,255,255,0.06)',
+          background: 'rgba(15,23,42,0.9)',
           borderRadius: '16px', display: 'flex', alignItems: 'center',
           justifyContent: 'center', fontWeight: 900, fontSize: '22px',
           color: '#94a3b8', flexShrink: 0, overflow: 'hidden',
         }}><FirmLogo logo={firm.logo} name={firm.name} size={72} /></div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
             <h1 style={{
-              fontSize: '28px', fontWeight: 700, color: '#f1f5f9', margin: 0,
+              fontSize: '26px', fontWeight: 700, color: '#f1f5f9', margin: 0,
               fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
             }}>{firm.name}</h1>
             <span style={{
               background: isEditorial ? 'rgba(0,255,136,0.08)' : 'rgba(255,255,255,0.04)',
               color: isEditorial ? '#00ff88' : '#94a3b8',
-              border: isEditorial ? '1px solid rgba(0,255,136,0.2)' : '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '4px', padding: '2px 8px',
+              border: isEditorial ? '1px solid rgba(0,255,136,0.3)' : '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '999px', padding: '2px 9px',
               fontSize: '10px', fontWeight: 700, letterSpacing: '1px',
             }}>{firm.tag}</span>
           </div>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
             <StarRating rating={firm.rating} size={16} />
             <span style={{ fontWeight: 700, fontSize: '16px', color: '#f1f5f9' }}>{firm.rating}</span>
             <span style={{ color: '#94a3b8', fontSize: '14px' }}>{firm.reviews.toLocaleString()} reviews</span>
           </div>
-          <p style={{ color: '#94a3b8', marginTop: '4px', lineHeight: 1.7, fontSize: '14px' }}>
+          <p style={{ color: '#94a3b8', marginTop: '4px', lineHeight: 1.8, fontSize: '14px' }}>
             {firm.description}
           </p>
         </div>
 
         {/* Discount + CTA */}
-        <div style={{ textAlign: 'center', minWidth: '140px' }}>
+        <div style={{ textAlign: 'center', minWidth: '150px' }}>
           <div style={{ fontSize: '32px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-1px' }}>
             {firm.discount}% OFF
           </div>
           <div style={{
             background: '#1a2a1a',
-            border: '1px solid rgba(0,255,136,0.3)',
-            borderRadius: '8px', padding: '8px 16px',
-            fontSize: '13px', fontWeight: 600, color: '#00ff88',
-            marginTop: '10px', letterSpacing: '1px', fontFamily: 'monospace',
+            border: '1px solid rgba(0,255,136,0.35)',
+            borderRadius: '999px', padding: '7px 16px',
+            fontSize: '12px', fontWeight: 600, color: '#00ff88',
+            marginTop: '8px', letterSpacing: '0.16em', fontFamily: 'monospace',
           }}>
             {firm.discountCode}
           </div>
@@ -109,29 +120,43 @@ export default function FirmDetail({ dbFirm }: Props) {
               href={firm.affiliateLink}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: 'block', marginTop: '10px', padding: '12px 28px',
-                background: '#00ff88', color: '#060b14',
-                borderRadius: '8px', fontWeight: 700,
-                fontSize: '14px', textDecoration: 'none',
-                textAlign: 'center', transition: 'transform 0.15s',
+                style={{
+                  display: 'block', marginTop: '10px', padding: '11px 26px',
+                  background: '#00ff88', color: '#060b14',
+                  borderRadius: '999px', fontWeight: 700,
+                  fontSize: '14px', textDecoration: 'none',
+                  textAlign: 'center', transition: 'transform 0.15s, box-shadow 0.15s',
+                  boxShadow: '0 14px 45px rgba(0,255,136,0.28)',
+                }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.boxShadow = '0 16px 55px rgba(0,255,136,0.32)'
               }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.02)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 14px 45px rgba(0,255,136,0.28)'
+              }}
             >
               Get Deal →
             </a>
           ) : (
             <button
               style={{
-                marginTop: '10px', padding: '12px 28px',
+                marginTop: '10px', padding: '11px 26px',
                 background: '#00ff88', color: '#060b14',
-                borderRadius: '8px', fontWeight: 700,
+                borderRadius: '999px', fontWeight: 700,
                 fontSize: '14px', border: 'none', cursor: 'pointer',
-                width: '100%', transition: 'transform 0.15s',
+                width: '100%', transition: 'transform 0.15s, box-shadow 0.15s',
+                boxShadow: '0 14px 45px rgba(0,255,136,0.28)',
               }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.02)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.boxShadow = '0 16px 55px rgba(0,255,136,0.32)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 14px 45px rgba(0,255,136,0.28)'
+              }}
             >
               Get Deal →
             </button>
@@ -140,17 +165,17 @@ export default function FirmDetail({ dbFirm }: Props) {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0', borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', gap: '0', borderBottom: '1px solid rgba(15,23,42,0.9)', marginBottom: '24px' }}>
         {TABS.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)} style={{
-            padding: '10px 20px', background: 'none', border: 'none',
+            padding: '9px 18px', background: 'none', border: 'none',
             borderBottom: `2px solid ${activeTab === tab ? '#00ff88' : 'transparent'}`,
-            color: activeTab === tab ? '#00ff88' : '#475569',
-            cursor: 'pointer', fontWeight: 600, fontSize: '14px',
+            color: activeTab === tab ? '#00ff88' : '#64748b',
+            cursor: 'pointer', fontWeight: 600, fontSize: '13px',
             transition: 'all 0.15s',
           }}
-            onMouseEnter={e => { if (activeTab !== tab) e.currentTarget.style.color = '#94a3b8' }}
-            onMouseLeave={e => { if (activeTab !== tab) e.currentTarget.style.color = '#475569' }}
+            onMouseEnter={e => { if (activeTab !== tab) e.currentTarget.style.color = '#e2e8f0' }}
+            onMouseLeave={e => { if (activeTab !== tab) e.currentTarget.style.color = '#64748b' }}
           >{tab}</button>
         ))}
       </div>

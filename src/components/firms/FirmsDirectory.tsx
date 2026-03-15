@@ -40,19 +40,29 @@ export default function FirmsDirectory({ initialFirms }: Props) {
     })
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 96px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 0 80px' }}>
       {/* Header */}
-      <div style={{ marginBottom: '36px' }}>
-        <h1 style={{
-          fontSize: '28px', fontWeight: 700,
-          color: '#f1f5f9', marginBottom: '8px',
-          fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
-        }}>
-          All Prop Firms
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: '14px' }}>
-          Showing {filtered.length} of {ALL_FIRMS.length} verified firms
-        </p>
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '12px' }}>
+        <div>
+          <h1 style={{
+            fontSize: '26px', fontWeight: 700,
+            color: '#f1f5f9', marginBottom: '6px',
+            fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
+            letterSpacing: '-0.03em',
+          }}>
+            All prop firms
+          </h1>
+          <p style={{ color: '#94a3b8', fontSize: '13px' }}>
+            Filter by rules, steps and discounts to find the right funding fit.
+          </p>
+        </div>
+        <div style={{ textAlign: 'right', fontSize: '12px', color: '#64748b' }}>
+          <div>
+            Showing <span style={{ color: '#e2e8f0' }}>{filtered.length}</span> of{' '}
+            <span style={{ color: '#e2e8f0' }}>{ALL_FIRMS.length}</span> verified firms
+          </div>
+          <div style={{ marginTop: '2px' }}>Market: <span style={{ color: '#22d3ee', textTransform: 'capitalize' }}>{marketType}</span></div>
+        </div>
       </div>
 
       {/* Filters */}
@@ -63,7 +73,7 @@ export default function FirmsDirectory({ initialFirms }: Props) {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-          gap: '16px',
+          gap: '18px',
         }}>
           {filtered.map((firm, i) => (
             <FirmCard key={firm.id} firm={firm} index={i} />

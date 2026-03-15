@@ -28,15 +28,29 @@ export default function RootLayout({
           flexDirection: 'column',
           minHeight: '100vh',
           fontFamily: 'var(--font-inter), Inter, sans-serif',
+          backgroundColor: '#060b14',
+          color: '#f1f5f9',
         }}
       >
         <MarketTypeProvider>
-          <Navbar />
-          <MarketToggle />
-          <main style={{ flex: 1 }}>
-            {children}
-          </main>
-          <Footer />
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '1400px',
+              margin: '0 auto',
+              padding: '0 24px 32px',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '100vh',
+            }}
+          >
+            <Navbar />
+            <MarketToggle />
+            <main style={{ flex: 1, paddingTop: '12px' }}>
+              {children}
+            </main>
+            <Footer />
+          </div>
         </MarketTypeProvider>
       </body>
     </html>

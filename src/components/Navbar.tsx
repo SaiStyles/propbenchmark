@@ -10,33 +10,70 @@ export default function Navbar() {
 
   return (
     <nav style={{
-      background: 'rgba(6,11,20,0.90)',
-      backdropFilter: 'blur(12px) saturate(180%)',
-      borderBottom: '1px solid rgba(255,255,255,0.06)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
-      padding: '0 24px',
-      height: '64px',
+      margin: '16px 0 12px',
+      padding: '10px 16px',
+      borderRadius: '12px',
+      background: 'rgba(6,11,20,0.95)',
+      backdropFilter: 'blur(18px) saturate(180%)',
+      border: '1px solid rgba(148,163,184,0.25)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
+      gap: '16px',
     }}>
       {/* Logo */}
-      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flex: 1 }}>
+      <Link
+        href="/"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          textDecoration: 'none',
+          flexShrink: 0,
+        }}
+      >
         <div style={{
-          width: '36px', height: '36px',
-          background: 'linear-gradient(135deg, #00ff88, #00cc6a)',
-          borderRadius: '8px', display: 'flex', alignItems: 'center',
-          justifyContent: 'center', fontWeight: 900, fontSize: '16px', color: '#060b14',
+          width: '34px',
+          height: '34px',
+          background: 'radial-gradient(circle at 30% 0%, #bfffe0, #00ff88)',
+          borderRadius: '10px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 900,
+          fontSize: '16px',
+          color: '#060b14',
+          boxShadow: '0 0 0 1px rgba(15,23,42,0.6), 0 12px 30px rgba(0,0,0,0.75)',
         }}>P</div>
-        <span style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.5px', color: '#f1f5f9' }}>
-          PropBenchmark
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span
+            style={{
+              fontSize: '18px',
+              fontWeight: 700,
+              letterSpacing: '-0.5px',
+              color: '#f1f5f9',
+            }}
+          >
+            PropBenchmark
+          </span>
+          <span
+            style={{
+              fontSize: '11px',
+              color: '#64748b',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Prop firm intelligence
+          </span>
+        </div>
       </Link>
 
       {/* Desktop Links */}
-      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '4px', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
         {[
           { label: 'Firms', href: '/firms' },
           { label: 'Compare', href: '/compare' },
@@ -46,22 +83,38 @@ export default function Navbar() {
         ].map(link => {
           const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href + '/'))
           return (
-            <Link key={link.href} href={link.href} style={{
-              padding: '6px 14px', borderRadius: '6px',
-              fontSize: '14px', fontWeight: isActive ? 600 : 500,
-              color: isActive ? '#00ff88' : '#475569',
-              textDecoration: 'none', transition: 'color 0.15s',
-              borderBottom: isActive ? '2px solid #00ff88' : '2px solid transparent',
-            }}
-              onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#94a3b8' }}
-              onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#475569' }}
-            >{link.label}</Link>
+            <Link
+              key={link.href}
+              href={link.href}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '999px',
+                fontSize: '13px',
+                fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#00ff88' : '#94a3b8',
+                textDecoration: 'none',
+                transition: 'background 0.18s, color 0.18s, box-shadow 0.18s',
+                background: isActive ? 'rgba(15,23,42,0.9)' : 'transparent',
+                boxShadow: isActive ? '0 0 0 1px rgba(0,255,136,0.5)' : 'none',
+              }}
+              onMouseEnter={e => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'rgba(15,23,42,0.7)'
+                  e.currentTarget.style.color = '#e2e8f0'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = '#94a3b8'
+                }
+              }}
+            >
+              {link.label}
+            </Link>
           )
         })}
       </div>
-
-      {/* Spacer — mirrors logo width to keep links centered */}
-      <div style={{ flex: 1 }} />
 
     </nav>
   )

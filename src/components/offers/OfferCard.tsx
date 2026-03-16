@@ -74,9 +74,15 @@ export default function OfferCard({ offer, index }: Props) {
               borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 900, fontSize: '13px', color: '#94a3b8',
-              flexShrink: 0,
+              flexShrink: 0, overflow: 'hidden',
             }}>
-              {offer.firmLogo}
+              {offer.firmLogo.startsWith('http') ? (
+                <img
+                  src={offer.firmLogo}
+                  alt={offer.firmName}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
+              ) : offer.firmLogo}
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '15px', color: '#f1f5f9' }}>

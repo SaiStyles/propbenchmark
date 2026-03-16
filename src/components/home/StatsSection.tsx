@@ -3,9 +3,7 @@
 import CountUp from '@/components/ui/CountUp'
 
 const stats = [
-  { number: '50+', label: 'Verified Firms' },
-  { number: '9,000+', label: 'Trader Reviews' },
-  { number: '4M+', label: 'Monthly Visits' },
+  { number: '17', label: 'Verified Firms' },
   { number: '100%', label: 'Unbiased Data' },
 ]
 

@@ -6,7 +6,14 @@ import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const pathname = usePathname()
+
+  function handleCopy() {
+    navigator.clipboard.writeText('BENCH')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1800)
+  }
 
   return (
     <nav style={{
@@ -86,6 +93,53 @@ export default function Navbar() {
           )
         })}
       </div>
+
+      {/* Discount code widget */}
+      <button
+        onClick={handleCopy}
+        style={{
+          display: 'flex', alignItems: 'center', gap: '6px',
+          background: copied ? 'rgba(0,255,136,0.1)' : 'rgba(0,255,136,0.05)',
+          border: `1px solid ${copied ? 'rgba(0,255,136,0.5)' : 'rgba(0,255,136,0.3)'}`,
+          borderRadius: '8px', padding: '5px 11px',
+          cursor: 'pointer', flexShrink: 0, minWidth: '148px', justifyContent: 'center',
+          boxShadow: copied ? '0 0 10px rgba(0,255,136,0.2)' : '0 0 8px rgba(0,255,136,0.08)',
+          transition: 'all 0.15s',
+        }}
+        onMouseEnter={e => {
+          if (!copied) {
+            e.currentTarget.style.background = 'rgba(0,255,136,0.09)'
+            e.currentTarget.style.borderColor = 'rgba(0,255,136,0.45)'
+            e.currentTarget.style.boxShadow = '0 0 12px rgba(0,255,136,0.16)'
+          }
+        }}
+        onMouseLeave={e => {
+          if (!copied) {
+            e.currentTarget.style.background = 'rgba(0,255,136,0.05)'
+            e.currentTarget.style.borderColor = 'rgba(0,255,136,0.3)'
+            e.currentTarget.style.boxShadow = '0 0 8px rgba(0,255,136,0.08)'
+          }
+        }}
+      >
+        {copied ? (
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#00ff88', letterSpacing: '0.5px' }}>
+            Copied!
+          </span>
+        ) : (
+          <>
+            <span style={{ fontSize: '11px', fontWeight: 500, color: '#475569', letterSpacing: '0.2px' }}>
+              use code
+            </span>
+            <span style={{ fontSize: '11px', fontWeight: 800, color: '#00ff88', letterSpacing: '1.5px', fontFamily: 'monospace' }}>
+              BENCH
+            </span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6, flexShrink: 0 }}>
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          </>
+        )}
+      </button>
 
     </nav>
   )

@@ -131,7 +131,7 @@ export default function TopFirmsSection({ firms: propFirms }: Props) {
                   border: '1px solid rgba(255,255,255,0.06)',
                 }}>
                   <div style={{ fontSize: '10px', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Max DD</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#f59e0b', marginTop: '3px' }}>{firm.maxDrawdown}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'rgb(255,41,87)', marginTop: '3px' }}>{firm.maxDrawdown}</div>
                 </div>
                 <div style={{
                   background: 'rgba(15,23,42,0.9)', borderRadius: '9px',

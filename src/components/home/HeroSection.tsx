@@ -57,7 +57,7 @@ export default function HeroSection() {
             }}
           >
             <span className="pulse-dot" />
-            17 VERIFIED FIRMS
+            18 VERIFIED FIRMS
           </div>
 
           {/* Title */}

@@ -36,6 +36,16 @@ function fmtAllocation(n: number | null): string {
   return `$${n}`
 }
 
+function fmtThresholdValue(value: number, accountSize: number, category: string | null): string {
+  if (category === 'futures') {
+    const pctRaw = (value / accountSize) * 100
+    const pct = Number.isInteger(pctRaw) ? `${pctRaw}` : pctRaw.toFixed(1)
+    return `$${value.toLocaleString('en-US')} (${pct}%)`
+  }
+  const dollar = Math.round((value / 100) * accountSize)
+  return `${value}% ($${dollar.toLocaleString('en-US')})`
+}
+
 function fmtPayoutFreq(freq: string | null): string {
   if (!freq) return '—'
   if (freq === 'on-demand') return 'On Demand'
@@ -202,10 +212,12 @@ const ROW_GROUPS: RowGroup[] = [
       {
         id: 'max_drawdown',
         label: 'Max Drawdown',
-        render: (m) => {
+        render: (m, firm) => {
           const dd = m?.max_drawdown ?? null
           if (dd == null) return <span style={{ color: '#475569' }}>—</span>
-          return <span style={{ color: '#f59e0b', fontWeight: 700 }}>{dd}%</span>
+          return <span style={{ color: 'rgb(255,41,87)', fontWeight: 700 }}>
+            {fmtThresholdValue(dd, m!.account_size, firm?.category ?? 'forex')}
+          </span>
         },
         winnerFn: (models) => winnerSet(models.map(m => m?.max_drawdown ?? null), 'highest'),
       },
@@ -213,10 +225,12 @@ const ROW_GROUPS: RowGroup[] = [
         id: 'daily_drawdown',
         label: 'Daily Loss Limit',
         isRuleBased: true,
-        render: (m) => {
+        render: (m, firm) => {
           const dll = m?.daily_drawdown ?? null
           if (dll == null) return <Badge color='#00ff88' bg='rgba(0,255,136,0.08)' border='rgba(0,255,136,0.2)'>None</Badge>
-          return <span style={{ color: '#f59e0b', fontWeight: 700 }}>${dll.toLocaleString('en-US')}</span>
+          return <span style={{ color: 'rgb(255,41,87)', fontWeight: 700 }}>
+            {fmtThresholdValue(dll, m!.account_size, firm?.category ?? 'forex')}
+          </span>
         },
         winnerFn: (models) => {
           // null wins; among non-null, highest $ wins (more headroom)

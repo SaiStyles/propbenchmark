@@ -197,7 +197,7 @@ export default function RankingList({ ranking }: Props) {
                       borderRadius: '6px', padding: '5px 10px',
                     }}>
                       <div style={{ fontSize: '9px', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Max DD</div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#f59e0b' }}>{firm.maxDrawdown}</div>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: 'rgb(255,41,87)' }}>{firm.maxDrawdown}</div>
                     </div>
                     {/* Fee — neutral */}
                     <div style={{

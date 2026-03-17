@@ -19,17 +19,48 @@ function fmtPercent(n: number | null | undefined): string {
   return n != null ? `${n}%` : '—'
 }
 
+/**
+ * Formats a drawdown or profit target value with both unit and dollar context.
+ * forex/cfd: value is a percentage  → "10% ($10,000)"
+ * futures:   value is a dollar amt  → "$2,000 (4.0%)"
+ * Returns 'None' for null/undefined.
+ */
+function fmtDrawdownValue(
+  value: number | null | undefined,
+  accountSize: number,
+  category: string,
+): string {
+  if (value == null) return 'None'
+  if (category === 'futures') {
+    const pctRaw = (value / accountSize) * 100
+    const pct = Number.isInteger(pctRaw) ? `${pctRaw}` : pctRaw.toFixed(1)
+    return `$${value.toLocaleString('en-US')} (${pct}%)`
+  }
+  const dollar = Math.round((value / 100) * accountSize)
+  return `${value}% ($${dollar.toLocaleString('en-US')})`
+}
+
+/** Same as fmtDrawdownValue but returns 'None' for 0 (profit_target = 0 means no target). */
+function fmtProfitTarget(
+  value: number | null | undefined,
+  accountSize: number,
+  category: string,
+): string {
+  if (value == null || value === 0) return 'None'
+  return fmtDrawdownValue(value, accountSize, category)
+}
+
 // ─── Transforms ───────────────────────────────────────────────────────────────
 
-function mapAccounts(models: DbAccountModel[]): AccountModel[] {
+function mapAccounts(models: DbAccountModel[], category: string): AccountModel[] {
   return [...models]
     .sort((a, b) => a.account_size - b.account_size)
     .map(m => ({
       size: fmtSize(m.account_size),
       fee: m.challenge_fee != null ? fmtFee(m.challenge_fee) : '—',
-      profitTarget: m.profit_target != null ? `${m.profit_target}` : '—',
-      maxDrawdown: m.max_drawdown != null ? `${m.max_drawdown}` : '—',
-      dailyDrawdown: m.daily_drawdown != null ? `${m.daily_drawdown}` : 'None',
+      profitTarget: fmtProfitTarget(m.profit_target, m.account_size, category),
+      maxDrawdown: fmtDrawdownValue(m.max_drawdown, m.account_size, category),
+      dailyDrawdown: fmtDrawdownValue(m.daily_drawdown, m.account_size, category),
       programName: m.program_name,
       activationFee: m.activation_fee != null ? fmtFee(m.activation_fee) : 'None',
       minimumTradingDays: m.minimum_trading_days != null ? `${m.minimum_trading_days}` : 'None',
@@ -55,7 +86,9 @@ function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
     discount: firm.discount_percent ?? 0,
     tag: '',
     profitSplit: fmtPercent(entry?.profit_split),
-    maxDrawdown: entry?.max_drawdown != null ? `${entry.max_drawdown}` : '—',
+    maxDrawdown: entry
+      ? fmtDrawdownValue(entry.max_drawdown, entry.account_size, firm.category ?? 'forex')
+      : 'None',
     challengeFee: entry?.challenge_fee != null ? fmtFee(entry.challenge_fee) : '—',
     steps,
     instantFunding: steps === 0,
@@ -193,7 +226,7 @@ export async function getFirmBySlug(slug: string): Promise<FirmDetailData | null
       description: data.description ?? '',
       pros,
       cons,
-      accounts: mapAccounts(models),
+      accounts: mapAccounts(models, data.category ?? 'forex'),
       affiliateLink: data.affiliate_link ?? undefined,
     }
   } catch {

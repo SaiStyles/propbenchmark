@@ -256,7 +256,7 @@ export default function FirmDetail({ dbFirm }: Props) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <div style={{
                     fontSize: '20px', fontWeight: 700,
-                    color: highlight ? '#00ff88' : isDrawdown && value !== 'None' ? '#f59e0b' : '#f1f5f9',
+                    color: highlight ? '#00ff88' : isDrawdown && value !== 'None' ? 'rgb(255,41,87)' : '#f1f5f9',
                   }}>{value}</div>
                   {isSplit && <ProfitSplitArc percent={firm.profitSplit} size={28} />}
                 </div>

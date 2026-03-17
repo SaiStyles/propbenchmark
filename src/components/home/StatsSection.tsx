@@ -3,7 +3,7 @@
 import CountUp from '@/components/ui/CountUp'
 
 const stats = [
-  { number: '17', label: 'Verified Firms' },
+  { number: '18', label: 'Verified Firms' },
   { number: '100%', label: 'Unbiased Data' },
 ]
 

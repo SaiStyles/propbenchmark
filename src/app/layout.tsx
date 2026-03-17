@@ -10,8 +10,11 @@ import MarketToggle from '@/components/ui/MarketToggle'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  title: 'PropBenchmark | Find Your Perfect Prop Firm',
+  title: 'PropBenchmark',
   description: 'Compare top prop trading firms with verified data, real trader reviews and exclusive discounts.',
+  icons: {
+    icon: '/favicon.png',
+  },
 }
 
 export default function RootLayout({

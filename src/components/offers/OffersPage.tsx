@@ -9,8 +9,6 @@ type Props = { initialOffers?: Offer[] }
 
 const SORT_OPTIONS = [
   { label: 'Highest Discount', value: 'discount' },
-  { label: 'Best Rated', value: 'rating' },
-  { label: 'Most Reviews', value: 'reviews' },
 ]
 
 export default function OffersPage({ initialOffers }: Props) {
@@ -22,12 +20,7 @@ export default function OffersPage({ initialOffers }: Props) {
   const [sortBy, setSortBy] = useState('discount')
 
   const filtered = ALL_OFFERS
-    .sort((a, b) => {
-      if (sortBy === 'discount') return b.discount - a.discount
-      if (sortBy === 'rating') return b.firmRating - a.firmRating
-      if (sortBy === 'reviews') return b.firmReviews - a.firmReviews
-      return 0
-    })
+    .sort((a, b) => b.discount - a.discount)
 
   const featured = filtered.filter(o => o.featured)
   const rest = filtered.filter(o => !o.featured)

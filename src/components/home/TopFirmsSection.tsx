@@ -89,12 +89,12 @@ export default function TopFirmsSection({ firms: propFirms }: Props) {
                       fontWeight: 700, fontSize: '15px', color: '#f1f5f9',
                       fontFamily: 'var(--font-geist-sans), Inter, sans-serif',
                     }}>{firm.name}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
-                      <StarRating rating={firm.rating} size={12} />
-                      <span style={{ color: '#475569', fontSize: '12px' }}>
-                        {firm.rating} · {firm.reviews.toLocaleString()}
-                      </span>
-                    </div>
+                    {firm.editorRating != null && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                        <StarRating rating={firm.editorRating} size={12} />
+                        <span style={{ color: '#475569', fontSize: '12px' }}>{firm.editorRating}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>

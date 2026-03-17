@@ -11,12 +11,17 @@ export default function MarketToggle() {
 
   return (
     <div style={{
+      position: 'sticky',
+      top: '56px',
+      zIndex: 90,
       background: 'rgba(6,11,20,0.92)',
       backdropFilter: 'blur(8px)',
       borderBottom: '1px solid rgba(255,255,255,0.05)',
       padding: '8px 24px',
       display: 'flex',
       justifyContent: 'center',
+      marginLeft: '-24px',
+      marginRight: '-24px',
     }}>
       <div style={{
         display: 'inline-flex',

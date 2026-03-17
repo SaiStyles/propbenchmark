@@ -8,7 +8,7 @@ import ProfitSplitArc from '@/components/ui/ProfitSplitArc'
 import DrawdownBar from '@/components/ui/DrawdownBar'
 import type { FirmDetailData } from '@/lib/types'
 
-const TABS = ['Overview', 'Reviews', 'Platforms']
+const TABS = ['Overview', /* 'Reviews', */ 'Platforms']
 const EDITORIAL_TAGS = new Set(["EDITOR'S CHOICE", 'TOP RATED', 'FUTURES #1', 'BEST VALUE'])
 
 function parsePercent(s: string): number {
@@ -91,11 +91,13 @@ export default function FirmDetail({ dbFirm }: Props) {
               fontSize: '10px', fontWeight: 700, letterSpacing: '1px',
             }}>{firm.tag}</span>
           </div>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
-            <StarRating rating={firm.rating} size={16} />
-            <span style={{ fontWeight: 700, fontSize: '16px', color: '#f1f5f9' }}>{firm.rating}</span>
-            <span style={{ color: '#94a3b8', fontSize: '14px' }}>{firm.reviews.toLocaleString()} reviews</span>
-          </div>
+          {firm.editorRating != null && (
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
+              <StarRating rating={firm.editorRating} size={16} />
+              <span style={{ fontWeight: 700, fontSize: '16px', color: '#f1f5f9' }}>{firm.editorRating}</span>
+              <span style={{ color: '#475569', fontSize: '13px' }}>Editor Rating</span>
+            </div>
+          )}
           <p style={{ color: '#94a3b8', marginTop: '4px', lineHeight: 1.8, fontSize: '14px' }}>
             {firm.description}
           </p>
@@ -264,7 +266,7 @@ export default function FirmDetail({ dbFirm }: Props) {
             ))}
           </div>
 
-          {/* Pros & Cons */}
+          {/* Pros & Cons — hidden until data is ready; uncomment to restore
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
             <div style={{
               background: '#0d1117',
@@ -308,7 +310,7 @@ export default function FirmDetail({ dbFirm }: Props) {
                 </div>
               ))}
             </div>
-          </div>
+          */}
 
           {/* Rules */}
           <div style={{
@@ -363,28 +365,11 @@ export default function FirmDetail({ dbFirm }: Props) {
 
       {/* Reviews Tab */}
       {activeTab === 'Reviews' && (
-        <div>
-          <div style={{
-            background: '#0d1117', borderRadius: '16px',
-            padding: '32px', marginBottom: '24px',
-            textAlign: 'center', border: '1px solid rgba(255,255,255,0.07)',
-          }}>
-            <div style={{ fontSize: '56px', fontWeight: 800, color: '#f1f5f9', lineHeight: 1, letterSpacing: '-2px' }}>
-              {firm.rating}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '12px 0 8px' }}>
-              <StarRating rating={firm.rating} size={20} />
-            </div>
-            <div style={{ color: '#475569', fontSize: '13px' }}>
-              Based on {firm.reviews.toLocaleString()} verified reviews
-            </div>
-          </div>
-          <div style={{
-            textAlign: 'center', padding: '40px 0',
-            color: '#475569', fontSize: '14px',
-          }}>
-            Verified trader reviews coming soon.
-          </div>
+        <div style={{
+          textAlign: 'center', padding: '64px 0',
+          color: '#475569', fontSize: '14px',
+        }}>
+          Verified trader reviews coming soon.
         </div>
       )}
 

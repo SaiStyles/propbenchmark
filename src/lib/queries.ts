@@ -71,7 +71,7 @@ function mapAccounts(models: DbAccountModel[], category: string): AccountModel[]
     }))
 }
 
-function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
+function mapFirmCard(firm: any, featured: boolean): Firm {
   const models: DbAccountModel[] = firm.account_models ?? []
   const entry = [...models].sort((a, b) => (a.account_size ?? 0) - (b.account_size ?? 0))[0]
 
@@ -81,8 +81,7 @@ function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
     id: firm.id,
     name: firm.name,
     logo: firm.logo_url ?? initials(firm.name),
-    rating: firm.editor_rating ?? 0,
-    reviews: reviewCount,
+    editorRating: firm.editor_rating ?? null,
     discount: firm.discount_percent ?? 0,
     tag: '',
     profitSplit: fmtPercent(entry?.profit_split),
@@ -100,17 +99,6 @@ function mapFirmCard(firm: any, featured: boolean, reviewCount: number): Firm {
   }
 }
 
-// ─── Shared helper: get review counts for a set of firm IDs ──────────────────
-
-async function getReviewMap(
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
-): Promise<Map<string, number>> {
-  const { data } = await supabase.from('reviews').select('firm_id')
-  const map = new Map<string, number>()
-  data?.forEach((r: any) => map.set(r.firm_id, (map.get(r.firm_id) ?? 0) + 1))
-  return map
-}
-
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
 /** All active firms, ordered by editor_rating desc. Returns [] on any error. */
@@ -118,7 +106,7 @@ export async function getFirms(): Promise<Firm[]> {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const [{ data, error }, featuredRes, reviewMap] = await Promise.all([
+    const [{ data, error }, featuredRes] = await Promise.all([
       supabase
         .from('firms')
         .select(`
@@ -132,7 +120,6 @@ export async function getFirms(): Promise<Firm[]> {
         .eq('status', 'active')
         .order('editor_rating', { ascending: false, nullsFirst: false }),
       supabase.from('featured_slots').select('firm_id'),
-      getReviewMap(supabase),
     ])
 
     if (error || !data?.length) return []
@@ -140,7 +127,7 @@ export async function getFirms(): Promise<Firm[]> {
     const featuredIds = new Set(featuredRes.data?.map((f: any) => f.firm_id) ?? [])
 
     return data.map(firm =>
-      mapFirmCard(firm, featuredIds.has(firm.id), reviewMap.get(firm.id) ?? 0)
+      mapFirmCard(firm, featuredIds.has(firm.id))
     )
   } catch {
     return []
@@ -171,7 +158,7 @@ export async function getFeaturedFirms(): Promise<Firm[]> {
 
     return data
       .filter((slot: any) => slot.firms?.status === 'active')
-      .map((slot: any) => mapFirmCard(slot.firms, true, 0))
+      .map((slot: any) => mapFirmCard(slot.firms, true))
   } catch {
     return []
   }
@@ -191,11 +178,6 @@ export async function getFirmBySlug(slug: string): Promise<FirmDetailData | null
 
     if (error || !data) return null
 
-    const { count: reviewCount } = await supabase
-      .from('reviews')
-      .select('id', { count: 'exact', head: true })
-      .eq('firm_id', data.id)
-
     const models: DbAccountModel[] = data.account_models ?? []
     const entry = [...models].sort((a, b) => a.account_size - b.account_size)[0]
     const steps = entry?.evaluation_steps ?? 1
@@ -210,8 +192,7 @@ export async function getFirmBySlug(slug: string): Promise<FirmDetailData | null
     return {
       name: data.name,
       logo: data.logo_url ?? initials(data.name),
-      rating: data.editor_rating ?? 0,
-      reviews: reviewCount ?? 0,
+      editorRating: data.editor_rating ?? null,
       discount: data.discount_percent ?? 0,
       tag: '',
       discountCode: data.discount_code ?? '',
@@ -241,7 +222,7 @@ export async function getOffers(): Promise<OfferData[]> {
 
     const { data, error } = await supabase
       .from('offers')
-      .select(`*, firms (name, slug, logo_url, editor_rating, category)`)
+      .select(`*, firms (name, slug, logo_url, category)`)
       .order('featured', { ascending: false })
 
     if (error || !data?.length) return []
@@ -253,8 +234,6 @@ export async function getOffers(): Promise<OfferData[]> {
         firmName: firm.name ?? '',
         firmLogo: firm.logo_url ?? initials(firm.name ?? '?'),
         firmSlug: firm.slug ?? '',
-        firmRating: firm.editor_rating ?? 0,
-        firmReviews: 0,
         category: firm.category ?? 'forex',
         discount: o.discount_percent ?? 0,
         code: o.code ?? '',
@@ -291,23 +270,20 @@ export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const [{ data, error }, reviewMap] = await Promise.all([
-      supabase
-        .from('firm_rankings')
-        .select(`
-          category, position,
-          firms (
-            id, name, slug, logo_url, category, editor_rating, discount_percent, status,
-            weekend_holding, news_trading_policy, is_verified,
-            account_models (
-              account_size, challenge_fee, profit_split, max_drawdown,
-              evaluation_steps
-            )
+    const { data, error } = await supabase
+      .from('firm_rankings')
+      .select(`
+        category, position,
+        firms (
+          id, name, slug, logo_url, category, editor_rating, discount_percent, status,
+          weekend_holding, news_trading_policy, is_verified,
+          account_models (
+            account_size, challenge_fee, profit_split, max_drawdown,
+            evaluation_steps
           )
-        `)
-        .order('position', { ascending: true }),
-      getReviewMap(supabase),
-    ])
+        )
+      `)
+      .order('position', { ascending: true })
 
     if (error || !data?.length) return {}
 
@@ -317,7 +293,7 @@ export async function getRankings(): Promise<Record<string, RankingFirmRow[]>> {
       const firm = row.firms
       if (!firm || firm.status !== 'active') continue
 
-      const mapped = mapFirmCard(firm, false, reviewMap.get(firm.id) ?? 0)
+      const mapped = mapFirmCard(firm, false)
       const ranked: RankingFirmRow = {
         ...mapped,
         tag: '',
@@ -490,20 +466,17 @@ export async function getTopProfitSplit(): Promise<Firm[]> {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const [{ data, error }, reviewMap] = await Promise.all([
-      supabase
-        .from('firms')
-        .select(`
-          id, name, slug, logo_url, category, editor_rating, discount_percent,
-          weekend_holding, news_trading_policy, is_verified,
-          account_models (
-            account_size, challenge_fee, profit_split, max_drawdown,
-            evaluation_steps
-          )
-        `)
-        .eq('status', 'active'),
-      getReviewMap(supabase),
-    ])
+    const { data, error } = await supabase
+      .from('firms')
+      .select(`
+        id, name, slug, logo_url, category, editor_rating, discount_percent,
+        weekend_holding, news_trading_policy, is_verified,
+        account_models (
+          account_size, challenge_fee, profit_split, max_drawdown,
+          evaluation_steps
+        )
+      `)
+      .eq('status', 'active')
 
     if (error || !data?.length) return []
 
@@ -513,12 +486,12 @@ export async function getTopProfitSplit(): Promise<Firm[]> {
         const maxSplit = models.length > 0
           ? Math.max(...models.map(m => m.profit_split ?? 0))
           : 0
-        return { firm, maxSplit, reviewCount: reviewMap.get(firm.id) ?? 0 }
+        return { firm, maxSplit }
       })
       .filter(x => x.maxSplit > 0)
       .sort((a, b) => b.maxSplit - a.maxSplit)
       .slice(0, 10)
-      .map(({ firm, reviewCount }) => mapFirmCard(firm, false, reviewCount))
+      .map(({ firm }) => mapFirmCard(firm, false))
   } catch {
     return []
   }

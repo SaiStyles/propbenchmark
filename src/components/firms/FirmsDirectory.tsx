@@ -16,7 +16,6 @@ export default function FirmsDirectory({ initialFirms }: Props) {
 
   const [filters, setFilters] = useState({
     search: '',
-    category: 'all',
     steps: 'all',
     instant: false,
     weekend: false,
@@ -25,17 +24,15 @@ export default function FirmsDirectory({ initialFirms }: Props) {
 
   const filtered = ALL_FIRMS
     .filter(f => {
-      if (filters.category !== 'all' && f.category !== filters.category) return false
-      if (filters.steps !== 'all' && f.steps !== parseInt(filters.steps)) return false
+if (filters.steps !== 'all' && f.steps !== parseInt(filters.steps)) return false
       if (filters.instant && !f.instantFunding) return false
       if (filters.weekend && !f.weekendHolding) return false
       if (filters.search && !f.name.toLowerCase().includes(filters.search.toLowerCase())) return false
       return true
     })
     .sort((a, b) => {
-      if (filters.sortBy === 'rating') return b.rating - a.rating
+      if (filters.sortBy === 'rating') return (b.editorRating ?? 0) - (a.editorRating ?? 0)
       if (filters.sortBy === 'discount') return b.discount - a.discount
-      if (filters.sortBy === 'reviews') return b.reviews - a.reviews
       return 0
     })
 
@@ -84,7 +81,7 @@ export default function FirmsDirectory({ initialFirms }: Props) {
           <div style={{ fontSize: '40px', marginBottom: '16px', color: '#475569' }}>—</div>
           <p style={{ fontSize: '14px', color: '#94a3b8' }}>No firms match your filters.</p>
           <button
-            onClick={() => setFilters({ search: '', category: 'all', steps: 'all', instant: false, weekend: false, sortBy: 'rating' })}
+            onClick={() => setFilters({ search: '', steps: 'all', instant: false, weekend: false, sortBy: 'rating' })}
             style={{
               marginTop: '16px', padding: '10px 24px',
               border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px',

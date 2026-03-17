@@ -9,8 +9,7 @@ export type RankedFirm = {
   name: string
   logo: string
   slug: string
-  rating: number
-  reviews: number
+  editorRating: number | null
   tag: string
   category: string
   profitSplit: string
@@ -165,10 +164,12 @@ export default function RankingList({ ranking }: Props) {
                     }}>
                       {firm.instantFunding ? 'Instant' : `${firm.steps === 0 ? 'Instant' : firm.steps + '-Step'}`} · {firm.category}
                     </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <StarRating rating={firm.rating} size={11} />
-                      <span style={{ fontSize: '12px', color: '#475569' }}>{firm.rating} · {firm.reviews.toLocaleString()}</span>
-                    </span>
+                    {firm.editorRating != null && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <StarRating rating={firm.editorRating} size={11} />
+                        <span style={{ fontSize: '12px', color: '#475569' }}>{firm.editorRating}</span>
+                      </span>
+                    )}
                   </div>
 
                   {/* Reason */}

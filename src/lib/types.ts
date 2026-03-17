@@ -79,8 +79,7 @@ export type Firm = {
   id: string | number
   name: string
   logo: string
-  rating: number
-  reviews: number
+  editorRating: number | null
   discount: number
   tag: string
   profitSplit: string
@@ -99,8 +98,7 @@ export type Firm = {
 export type FirmDetailData = {
   name: string
   logo: string
-  rating: number
-  reviews: number
+  editorRating: number | null
   discount: number
   tag: string
   discountCode: string
@@ -168,8 +166,6 @@ export type OfferData = {
   firmName: string
   firmLogo: string
   firmSlug: string
-  firmRating: number
-  firmReviews: number
   category: string
   discount: number
   code: string

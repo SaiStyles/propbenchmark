@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import StarRating from '@/components/ui/StarRating'
 import type { OfferData } from '@/lib/types'
 
 // Backward-compat alias used by OffersPage
@@ -87,12 +86,6 @@ export default function OfferCard({ offer, index }: Props) {
             <div>
               <div style={{ fontWeight: 700, fontSize: '15px', color: '#f1f5f9' }}>
                 {offer.firmName}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
-                <StarRating rating={offer.firmRating} size={11} />
-                <span style={{ fontSize: '12px', color: '#475569' }}>
-                  {offer.firmRating} · {offer.firmReviews.toLocaleString()}
-                </span>
               </div>
             </div>
           </div>

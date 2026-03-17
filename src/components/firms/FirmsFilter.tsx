@@ -2,7 +2,6 @@
 
 type Filters = {
   search: string
-  category: string
   steps: string
   instant: boolean
   weekend: boolean
@@ -49,14 +48,6 @@ export default function FirmsFilter({ filters, onChange }: Props) {
         style={{ ...inputStyle, flex: 1, minWidth: '160px' }}
       />
 
-      {/* Category */}
-      <select value={filters.category} onChange={e => update('category', e.target.value)} style={inputStyle}>
-        <option value="all">All Categories</option>
-        <option value="forex">Forex</option>
-        <option value="futures">Futures</option>
-        <option value="instant">Instant Funding</option>
-      </select>
-
       {/* Steps */}
       <select value={filters.steps} onChange={e => update('steps', e.target.value)} style={inputStyle}>
         <option value="all">All Steps</option>
@@ -68,9 +59,8 @@ export default function FirmsFilter({ filters, onChange }: Props) {
 
       {/* Sort */}
       <select value={filters.sortBy} onChange={e => update('sortBy', e.target.value)} style={inputStyle}>
-        <option value="rating">Sort: Rating</option>
+        <option value="rating">Sort: Editor Rating</option>
         <option value="discount">Sort: Discount</option>
-        <option value="reviews">Sort: Reviews</option>
       </select>
 
       {/* Instant toggle */}

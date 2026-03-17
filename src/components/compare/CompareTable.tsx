@@ -53,9 +53,9 @@ function fmtPayoutFreq(freq: string | null): string {
 }
 
 const DD_TYPE_RANK: Record<string, number> = {
-  'EOD Trailing': 3,
-  'Intraday Trailing': 2,
-  'Static': 1,
+  'Static': 3,
+  'EOD Trailing': 2,
+  'Intraday Trailing': 1,
 }
 
 const PAYOUT_RANK: Record<string, number> = {
@@ -438,13 +438,14 @@ export default function CompareTable({
 
   const filledCount = slots.filter(s => s.firm != null).length
 
-  // Compute winner indices for a row
+  // Compute winner indices for a row — only among filled slots
   function computeWinners(row: RowDef): Set<number> {
     if (!row.winnerFn) return new Set()
     const models = slots.map(s => s.model)
     const firms = slots.map(s => s.firm)
-    // Only consider filled slots — return indices of actual winners, but map to slot index
-    return row.winnerFn(models, firms)
+    const filledIndices = new Set(slots.map((s, i) => s.firm ? i : -1).filter(i => i >= 0))
+    const winners = row.winnerFn(models, firms)
+    return new Set([...winners].filter(i => filledIndices.has(i)))
   }
 
   // Determine if a row should be shown

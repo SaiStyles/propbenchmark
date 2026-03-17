@@ -173,7 +173,7 @@ export default function Footer() {
               <span style={{ fontSize: '16px', fontWeight: 700, color: '#f1f5f9' }}>PropBenchmark</span>
             </div>
             <p style={{ color: '#475569', fontSize: '13px', maxWidth: '240px', lineHeight: 1.7 }}>
-              Independent prop firm reviews. Verified data. Real trader experiences.
+              The benchmark for prop firm evaluation. Pure data, no bias.
             </p>
           </div>
 
@@ -189,10 +189,9 @@ export default function Footer() {
               ],
             },
             {
-              title: 'Content',
+              title: 'Resources',
               links: [
                 { label: 'Blog', href: '/blog' },
-                { label: 'Reviews', href: '/blog?category=Firm+Reviews' },
               ],
             },
             {

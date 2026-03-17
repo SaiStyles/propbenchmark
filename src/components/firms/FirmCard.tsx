@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { BadgeCheck, Users } from 'lucide-react'
+import { BadgeCheck } from 'lucide-react'
 import StarRating from '@/components/ui/StarRating'
 import FirmLogo from '@/components/ui/FirmLogo'
 import type { Firm } from '@/lib/types'
@@ -69,7 +69,10 @@ export default function FirmCard({ firm, index }: Props) {
       )}
 
       {/* Top row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px',
+        paddingRight: firm.featured ? '72px' : 0,
+      }}>
         <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
           <div style={{
             width: '48px', height: '48px',
@@ -80,18 +83,26 @@ export default function FirmCard({ firm, index }: Props) {
           }}><FirmLogo logo={firm.logo} name={firm.name} size={48} /></div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '15px', color: '#f1f5f9', fontFamily: 'var(--font-geist-sans), Inter, sans-serif' }}>{firm.name}</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
-              <StarRating rating={firm.rating} size={12} />
-              <span style={{ color: '#475569', fontSize: '12px' }}>
-                {firm.rating} · {firm.reviews.toLocaleString()}
-              </span>
-            </div>
+            {firm.editorRating != null && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                <StarRating rating={firm.editorRating} size={12} />
+                <span style={{ color: '#475569', fontSize: '12px' }}>{firm.editorRating}</span>
+              </div>
+            )}
           </div>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '18px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>{firm.discount}%</div>
-          <div style={{ fontSize: '10px', color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>discount</div>
-        </div>
+        {!firm.featured && (
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>{firm.discount}%</div>
+            <div style={{ fontSize: '10px', color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>discount</div>
+          </div>
+        )}
+        {firm.featured && (
+          <div style={{ position: 'absolute', top: '48px', right: '24px', textAlign: 'right' }}>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>{firm.discount}%</div>
+            <div style={{ fontSize: '10px', color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>discount</div>
+          </div>
+        )}
       </div>
 
       {/* Tags */}
@@ -185,10 +196,6 @@ export default function FirmCard({ firm, index }: Props) {
             <span>Verified</span>
           </span>
         )}
-        <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px', color: '#475569' }}>
-          <Users size={10} />
-          {firm.reviews.toLocaleString()}
-        </span>
       </div>
     </div>
   )

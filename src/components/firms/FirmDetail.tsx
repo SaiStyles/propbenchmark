@@ -328,7 +328,7 @@ export default function FirmDetail({ dbFirm }: Props) {
               { label: 'Min Trading Days', value: account.minimumTradingDays, color: '#f1f5f9' },
               { label: 'Activation Fee', value: account.activationFee, color: '#f1f5f9' },
               { label: 'Max Contracts', value: account.maxContracts, color: '#f1f5f9' },
-              { label: 'Consistency', value: account.consistencyRule, color: '#f1f5f9' },
+              { label: 'Consistency', value: account.consistencyRule ? 'Yes' : 'None', color: '#f1f5f9' },
               {
                 label: 'Scaling',
                 value: account.scalingAvailable ? 'Available' : 'Not Available',

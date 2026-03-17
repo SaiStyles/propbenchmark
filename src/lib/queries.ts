@@ -334,7 +334,7 @@ export async function getCompareData(): Promise<CompareFirm[]> {
       .order('name', { ascending: true })
 
     if (error || !data?.length) return []
-    return data as CompareFirm[]
+    return data as CompareFirm[] 
   } catch {
     return []
   }

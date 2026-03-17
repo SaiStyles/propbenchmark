@@ -21,6 +21,7 @@ export default function FirmDetail({ dbFirm }: Props) {
   const [activeTab, setActiveTab] = useState('Overview')
   const [selectedProgram, setSelectedProgram] = useState('')
   const [selectedAccount, setSelectedAccount] = useState(0)
+  const [codeCopied, setCodeCopied] = useState(false)
 
   const firm = dbFirm
 
@@ -108,15 +109,35 @@ export default function FirmDetail({ dbFirm }: Props) {
           <div style={{ fontSize: '32px', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-1px' }}>
             {firm.discount}% OFF
           </div>
-          <div style={{
-            background: '#1a2a1a',
-            border: '1px solid rgba(0,255,136,0.35)',
-            borderRadius: '999px', padding: '7px 16px',
-            fontSize: '12px', fontWeight: 600, color: '#00ff88',
-            marginTop: '8px', letterSpacing: '0.16em', fontFamily: 'monospace',
-          }}>
-            {firm.discountCode}
-          </div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(firm.discountCode)
+              setCodeCopied(true)
+              setTimeout(() => setCodeCopied(false), 1800)
+            }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              background: codeCopied ? 'rgba(0,255,136,0.1)' : '#1a2a1a',
+              border: `1px solid ${codeCopied ? 'rgba(0,255,136,0.5)' : 'rgba(0,255,136,0.35)'}`,
+              borderRadius: '999px', padding: '7px 16px',
+              fontSize: '12px', fontWeight: 600, color: '#00ff88',
+              marginTop: '8px', letterSpacing: '0.16em', fontFamily: 'monospace',
+              cursor: 'pointer', boxShadow: codeCopied ? '0 0 10px rgba(0,255,136,0.2)' : '0 0 8px rgba(0,255,136,0.08)',
+              transition: 'all 0.15s', width: '100%', justifyContent: 'center',
+            }}
+          >
+            {codeCopied ? (
+              <span style={{ letterSpacing: '0.5px' }}>Copied!</span>
+            ) : (
+              <>
+                {firm.discountCode}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6, flexShrink: 0 }}>
+                  <rect x="9" y="9" width="13" height="13" rx="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1" />
+                </svg>
+              </>
+            )}
+          </button>
           {firm.affiliateLink ? (
             <a
               href={firm.affiliateLink}

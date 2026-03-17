@@ -107,7 +107,7 @@ export default function FirmCard({ firm, index }: Props) {
 
       {/* Tags */}
       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
-        <TagBadge tag={firm.tag} />
+        {firm.tag && <TagBadge tag={firm.tag} />}
         {firm.instantFunding && (
           <span style={{
             background: 'rgba(255,255,255,0.04)', color: '#94a3b8',

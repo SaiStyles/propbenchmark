@@ -90,7 +90,7 @@ export default function HeroSection() {
               animationDelay: '160ms',
             }}
           >
-            Every rule. Every fee. Every payout condition — benchmarked, so you trade with clarity, not regret.
+            The top firms, ranked and dissected. Compare with complete clarity.
           </p>
 
           {/* CTAs */}

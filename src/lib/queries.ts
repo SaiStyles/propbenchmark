@@ -73,7 +73,8 @@ function mapAccounts(models: DbAccountModel[], category: string): AccountModel[]
 
 function mapFirmCard(firm: any, featured: boolean): Firm {
   const models: DbAccountModel[] = firm.account_models ?? []
-  const entry = [...models].sort((a, b) => (a.account_size ?? 0) - (b.account_size ?? 0))[0]
+  const sorted = [...models].sort((a, b) => (a.account_size ?? 0) - (b.account_size ?? 0))
+  const entry = sorted.find(m => m.account_size === 50000) ?? sorted[0]
 
   const steps = entry?.evaluation_steps ?? 1
 

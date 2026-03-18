@@ -233,18 +233,37 @@ export default function Footer() {
           alignItems: 'center', flexWrap: 'wrap', gap: '12px',
         }}>
           <p style={{ color: '#475569', fontSize: '12px' }}>
-            © 2026 PropBenchmark. Independent reviews. Not financial advice.
+            © 2026 PropBenchmark. Not financial advice.
           </p>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            {['Privacy Policy', 'Terms'].map(item => (
-              <Link key={item} href="#" style={{
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {[
+              { label: 'Privacy Policy', href: '/privacy' },
+              { label: 'Terms', href: '/terms' },
+            ].map(item => (
+              <Link key={item.label} href={item.href} style={{
                 color: '#475569', fontSize: '12px', textDecoration: 'none',
                 transition: 'color 0.15s',
               }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#94a3b8')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
-              >{item}</Link>
+              >{item.label}</Link>
             ))}
+            <a
+              href="https://x.com/PropBenchmark"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="PropBenchmark on X"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#475569', transition: 'color 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#94a3b8')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>

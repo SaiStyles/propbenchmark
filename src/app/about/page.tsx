@@ -67,9 +67,46 @@ export default function AboutPage() {
         </div>
       ))}
 
-      {/* CTA */}
+      {/* Follow on X */}
       <div style={{
         marginTop: '56px',
+        padding: '28px 32px',
+        background: '#0d1117',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: '16px',
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center', flexWrap: 'wrap', gap: '16px',
+      }}>
+        <div>
+          <div style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '15px', marginBottom: '4px' }}>
+            Follow us on X
+          </div>
+          <div style={{ color: '#475569', fontSize: '13px' }}>
+            Firm news, offer alerts, and prop firm analysis — no noise.
+          </div>
+        </div>
+        <a
+          href="https://x.com/PropBenchmark"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            padding: '10px 22px',
+            background: '#f1f5f9', color: '#060b14',
+            borderRadius: '999px', fontWeight: 700,
+            fontSize: '13px', textDecoration: 'none',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+          @PropBenchmark
+        </a>
+      </div>
+
+      {/* CTA */}
+      <div style={{
+        marginTop: '16px',
         padding: '28px 32px',
         background: '#0d1117',
         border: '1px solid rgba(255,255,255,0.07)',

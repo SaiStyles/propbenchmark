@@ -94,8 +94,8 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* Discount code widget — hidden, do not delete */}
-      {/* <button
+      {/* Discount code widget */}
+      <button
         onClick={handleCopy}
         style={{
           display: 'flex', alignItems: 'center', gap: '6px',
@@ -139,7 +139,7 @@ export default function Navbar() {
             </svg>
           </>
         )}
-      </button> */}
+      </button>
 
     </nav>
   )
